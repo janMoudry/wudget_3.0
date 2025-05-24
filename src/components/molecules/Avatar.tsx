@@ -6,42 +6,39 @@ import { useNavigate } from "react-router";
 import { ROUTES } from "../../navigation/ROUTES";
 
 const Avatar = () => {
-	const [open, setOpen] = useState(false);
-	const ref = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
-	const { logout } = useAuth();
-	const navigate = useNavigate();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-	useEffect(() => {
-		const handleClickOutside = (e: MouseEvent) => {
-			if (ref.current && !ref.current.contains(e.target as Node)) {
-				setOpen(false);
-			}
-		};
-		document.addEventListener("mousedown", handleClickOutside);
-		return () =>
-			document.removeEventListener("mousedown", handleClickOutside);
-	}, []);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-	return (
-		<div className="relative" ref={ref}>
-			<button
-				onClick={() => setOpen(!open)}
-				className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center font-bold text-sm text-blue-900 cursor-pointer hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-			>
-				JM
-			</button>
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center font-bold text-sm text-primary-900 cursor-pointer hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200"
+      >
+        JM
+      </button>
 
-			{open && (
-				<Menu>
-					<MenuItem onClick={() => navigate(ROUTES.PROFILE)}>
-						Profil
-					</MenuItem>
-					<MenuItem onClick={logout}>Odhlásit se</MenuItem>
-				</Menu>
-			)}
-		</div>
-	);
+      {open && (
+        <Menu>
+          <MenuItem onClick={() => navigate(ROUTES.PROFILE)}>Profil</MenuItem>
+          <MenuItem onClick={logout}>Odhlásit se</MenuItem>
+        </Menu>
+      )}
+    </div>
+  );
 };
 
 export default Avatar;

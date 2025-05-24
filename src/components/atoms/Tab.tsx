@@ -6,50 +6,48 @@ import { ROUTES } from "../../navigation/ROUTES";
 import { useMultiTab } from "../../hooks/useMultiTab";
 
 interface TabProps {
-	id: string;
-	name: string;
+  id: string;
+  name: string;
 }
 
 const Tab: FC<TabProps> = ({ id, name }) => {
-	const navigate = useNavigate();
-	const { activeTab, removeTab } = useMultiTab();
+  const navigate = useNavigate();
+  const { activeTab, removeTab } = useMultiTab();
 
-	const handleClick = () => {
-		navigate(
-			ROUTES.CLIENT.DASHBOARD.replace(ROUTES.CLIENT_ROOT, `/${id}/`)
-		);
-	};
+  const handleClick = () => {
+    navigate(ROUTES.CLIENT.DASHBOARD.replace(ROUTES.CLIENT_ROOT, `/${id}/`));
+  };
 
-	const handleClose = () => {
-		if (activeTab === id) {
-			navigate(ROUTES.DASHBOARD);
-		}
-		removeTab(id);
-	};
+  const handleClose = () => {
+    if (activeTab === id) {
+      navigate(ROUTES.DASHBOARD);
+    }
+    removeTab(id);
+  };
 
-	const active = activeTab === id;
-	return (
-		<div
-			className={clsx(
-				"flex items-center gap-2 px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors duration-150",
-				active
-					? "bg-white text-gray-900 shadow"
-					: "bg-gray-700 text-gray-200 hover:bg-gray-600"
-			)}
-			onClick={handleClick}
-		>
-			<span className="truncate max-w-[100px]">{name}</span>
-			<button
-				className="hover:text-red-500 text-gray-400 transition-colors duration-150"
-				onClick={(e) => {
-					e.stopPropagation();
-					handleClose();
-				}}
-			>
-				<X size={14} />
-			</button>
-		</div>
-	);
+  const active = activeTab === id;
+  return (
+    <div
+      className={clsx(
+        "flex items-center gap-2 px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors duration-150",
+        active
+          ? "bg-white text-neutral-900 shadow-sm"
+          : "bg-neutral-700 text-neutral-200 hover:bg-neutral-600"
+      )}
+      onClick={handleClick}
+    >
+      <span className="truncate max-w-[100px]">{name}</span>
+      <button
+        className="hover:text-error-500 text-neutral-400 transition-colors duration-150"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleClose();
+        }}
+      >
+        <X size={14} />
+      </button>
+    </div>
+  );
 };
 
 export default Tab;
