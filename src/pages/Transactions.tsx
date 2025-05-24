@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Button, Typography, Paper, TextField } from "../components";
 import { ArrowDownUp, Download, Filter, Search, TrendingUp } from "lucide-react";
+import clsx from "classnames";
 
 type Transaction = {
   date: string;
