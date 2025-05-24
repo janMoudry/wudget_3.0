@@ -12,14 +12,14 @@ const BaseLayout = () => {
   }, [changeLastVisitedGeneralPage, pathname]);
 
   return (
-    <div className="flex flex-col h-screen bg-neutral-900">
+    <div className="flex flex-col h-screen bg-white">
       <AppBar />
       <div className="flex flex-1 overflow-hidden">
         <SideBar />
-        <main className="flex-1 overflow-y-auto p-6 bg-neutral-900">
+        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
           <Suspense fallback={
             <div className="flex items-center justify-center h-full">
-              <div className="text-neutral-200 text-lg">Načítání...</div>
+              <div className="text-gray-600 text-lg">Načítání...</div>
             </div>
           }>
             <Outlet />

@@ -32,60 +32,60 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <div>
-        <Typography variant="h2" className="text-neutral-100 mb-2">
+        <Typography variant="h2" className="text-gray-900 mb-2">
           Úvodní přehled
         </Typography>
-        <Typography variant="small" className="text-neutral-400">
+        <Typography variant="small" className="text-gray-500">
           Globální pohled na data všech klientů
         </Typography>
       </div>
 
       {/* Statistika */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Paper className="p-6 bg-neutral-800 border-neutral-700">
+        <Paper className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary-500/10 rounded-lg">
-              <User className="w-6 h-6 text-primary-500" />
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <User className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <Typography variant="small" className="text-neutral-400 mb-1">
+              <Typography variant="small" className="text-gray-500 mb-1">
                 Počet klientů
               </Typography>
-              <Typography variant="h2" className="text-neutral-100">
+              <Typography variant="h2" className="text-gray-900">
                 {mock.clients}
               </Typography>
             </div>
           </div>
         </Paper>
 
-        <Paper className="p-6 bg-neutral-800 border-neutral-700">
+        <Paper className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-success-500/10 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-success-500" />
+            <div className="p-3 bg-green-50 rounded-lg">
+              <TrendingUp className="w-6 h-6 text-green-600" />
             </div>
             <div>
-              <Typography variant="small" className="text-neutral-400 mb-1">
+              <Typography variant="small" className="text-gray-500 mb-1">
                 Celkem transakcí
               </Typography>
-              <Typography variant="h2" className="text-neutral-100">
+              <Typography variant="h2" className="text-gray-900">
                 {mock.transactions}
               </Typography>
             </div>
           </div>
         </Paper>
 
-        <Paper className="p-6 bg-neutral-800 border-neutral-700">
+        <Paper className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-warning-500/10 rounded-lg">
-              <CreditCard className="w-6 h-6 text-warning-500" />
+            <div className="p-3 bg-purple-50 rounded-lg">
+              <CreditCard className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <Typography variant="small" className="text-neutral-400 mb-1">
+              <Typography variant="small" className="text-gray-500 mb-1">
                 Celková bilance
               </Typography>
-              <Typography variant="h2" className="text-neutral-100">
+              <Typography variant="h2" className="text-gray-900">
                 {mock.balance.toLocaleString("cs-CZ", {
                   style: "currency",
                   currency: "CZK",
@@ -95,16 +95,16 @@ const Dashboard = () => {
           </div>
         </Paper>
 
-        <Paper className="p-6 bg-neutral-800 border-neutral-700">
+        <Paper className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary-500/10 rounded-lg">
-              <Wallet className="w-6 h-6 text-primary-500" />
+            <div className="p-3 bg-indigo-50 rounded-lg">
+              <Wallet className="w-6 h-6 text-indigo-600" />
             </div>
             <div>
-              <Typography variant="small" className="text-neutral-400 mb-1">
+              <Typography variant="small" className="text-gray-500 mb-1">
                 Průměrná transakce
               </Typography>
-              <Typography variant="h2" className="text-neutral-100">
+              <Typography variant="h2" className="text-gray-900">
                 {(mock.balance / mock.transactions).toLocaleString("cs-CZ", {
                   style: "currency",
                   currency: "CZK",
@@ -118,54 +118,54 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Poslední výpisy */}
-        <Paper className="p-6 bg-neutral-800 border-neutral-700">
-          <Typography variant="h3" className="text-neutral-100 mb-4">
+        <Paper className="p-6">
+          <Typography variant="h3" className="text-gray-900 mb-4">
             Poslední výpisy
           </Typography>
           <div className="space-y-4">
             {mock.lastUploads.map((u, i) => (
               <div
                 key={i}
-                className="flex justify-between items-center p-3 rounded-lg bg-neutral-700/50"
+                className="flex justify-between items-center p-3 rounded-lg bg-gray-50"
               >
                 <div>
-                  <p className="text-neutral-100 font-medium">{u.clientName}</p>
-                  <p className="text-sm text-neutral-400">{u.bank}</p>
+                  <p className="text-gray-900 font-medium">{u.clientName}</p>
+                  <p className="text-sm text-gray-500">{u.bank}</p>
                 </div>
-                <span className="text-sm text-neutral-400">{u.date}</span>
+                <span className="text-sm text-gray-500">{u.date}</span>
               </div>
             ))}
           </div>
         </Paper>
 
         {/* Největší transakce */}
-        <Paper className="p-6 bg-neutral-800 border-neutral-700">
-          <Typography variant="h3" className="text-neutral-100 mb-4">
+        <Paper className="p-6">
+          <Typography variant="h3" className="text-gray-900 mb-4">
             Největší transakce
           </Typography>
           <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-success-500/10 border border-success-500/20">
-              <p className="text-success-400 font-medium mb-1">Největší příjem</p>
-              <p className="text-success-100 text-lg font-semibold">
+            <div className="p-4 rounded-lg bg-green-50 border border-green-100">
+              <p className="text-green-700 font-medium mb-1">Největší příjem</p>
+              <p className="text-green-900 text-lg font-semibold">
                 {mock.maxIncome.amount.toLocaleString("cs-CZ", {
                   style: "currency",
                   currency: "CZK",
                 })}
               </p>
-              <p className="text-sm text-success-300 mt-1">
+              <p className="text-sm text-green-600 mt-1">
                 {mock.maxIncome.counterparty}
               </p>
             </div>
 
-            <div className="p-4 rounded-lg bg-error-500/10 border border-error-500/20">
-              <p className="text-error-400 font-medium mb-1">Největší výdaj</p>
-              <p className="text-error-100 text-lg font-semibold">
+            <div className="p-4 rounded-lg bg-red-50 border border-red-100">
+              <p className="text-red-700 font-medium mb-1">Největší výdaj</p>
+              <p className="text-red-900 text-lg font-semibold">
                 {mock.maxExpense.amount.toLocaleString("cs-CZ", {
                   style: "currency",
                   currency: "CZK",
                 })}
               </p>
-              <p className="text-sm text-error-300 mt-1">
+              <p className="text-sm text-red-600 mt-1">
                 {mock.maxExpense.counterparty}
               </p>
             </div>
@@ -174,12 +174,12 @@ const Dashboard = () => {
       </div>
 
       {/* Seznam klientů */}
-      <Paper className="p-6 bg-neutral-800 border-neutral-700">
-        <Typography variant="h3" className="text-neutral-100 mb-4">
+      <Paper className="p-6">
+        <Typography variant="h3" className="text-gray-900 mb-4">
           Klienti bez aktuálního výpisu
         </Typography>
         {mock.outdatedClients.length === 0 ? (
-          <p className="text-neutral-400">
+          <p className="text-gray-500">
             Všichni klienti jsou aktuální ✅
           </p>
         ) : (
@@ -187,16 +187,16 @@ const Dashboard = () => {
             {mock.outdatedClients.map((c) => (
               <div
                 key={c.id}
-                className="p-4 rounded-lg bg-neutral-700/50 border border-neutral-600"
+                className="p-4 rounded-lg bg-gray-50 border border-gray-200"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-neutral-600 rounded-lg">
-                      <User className="w-5 h-5 text-neutral-300" />
+                    <div className="p-2 bg-gray-100 rounded-lg">
+                      <User className="w-5 h-5 text-gray-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-100">{c.name}</p>
-                      <p className="text-xs text-neutral-400 mt-1">
+                      <p className="font-medium text-gray-900">{c.name}</p>
+                      <p className="text-xs text-gray-500 mt-1">
                         Naposledy: {c.lastUpdated || "nikdy"}
                       </p>
                     </div>

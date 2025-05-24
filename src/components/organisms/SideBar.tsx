@@ -3,15 +3,15 @@ import { ROUTES } from "../../navigation/ROUTES";
 
 const SideBar = () => {
   return (
-    <aside className="w-64 bg-neutral-800 border-r border-neutral-700 p-4 h-full">
+    <aside className="w-64 bg-white border-r border-gray-200 p-4 h-full">
       <nav className="flex flex-col gap-2 text-sm">
         <NavLink
           to={ROUTES.DASHBOARD}
           className={({ isActive }) =>
             `px-3 py-2 rounded-lg transition-colors duration-200 ${
               isActive 
-                ? "bg-neutral-700 text-white font-medium" 
-                : "text-neutral-300 hover:bg-neutral-700/50 hover:text-white"
+                ? "bg-gray-100 text-gray-900 font-medium" 
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
             }`
           }
         >
@@ -22,8 +22,8 @@ const SideBar = () => {
           className={({ isActive }) =>
             `px-3 py-2 rounded-lg transition-colors duration-200 ${
               isActive 
-                ? "bg-neutral-700 text-white font-medium" 
-                : "text-neutral-300 hover:bg-neutral-700/50 hover:text-white"
+                ? "bg-gray-100 text-gray-900 font-medium" 
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
             }`
           }
         >
