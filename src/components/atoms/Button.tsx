@@ -23,6 +23,7 @@ const Button: FC<ButtonProps> = ({
         "inline-flex items-center justify-center font-medium rounded-lg",
         "transition-all duration-200 ease-in-out",
         "focus:outline-none focus:ring-2 focus:ring-offset-2",
+        "cursor-pointer",
         
         // Size variants
         {
@@ -33,20 +34,20 @@ const Button: FC<ButtonProps> = ({
         
         // Style variants
         {
-          // Primary
-          "bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 focus:ring-primary-500":
+          // Primary - Spotify-like green
+          "bg-primary-500 text-white hover:bg-primary-400 active:bg-primary-600 focus:ring-primary-500":
             variant === "primary" && !disabled,
           
           // Secondary
-          "bg-white text-neutral-700 border border-neutral-300 hover:bg-neutral-50 hover:border-neutral-400 active:bg-neutral-100 focus:ring-neutral-500":
+          "bg-neutral-100 text-neutral-900 border border-neutral-300 hover:bg-neutral-200 active:bg-neutral-300 focus:ring-neutral-500":
             variant === "secondary" && !disabled,
           
           // Tertiary
-          "text-primary-600 hover:text-primary-700 hover:bg-primary-50 bg-transparent":
+          "text-primary-500 hover:text-primary-400 hover:bg-primary-50 bg-transparent":
             variant === "tertiary" && !disabled,
           
           // Disabled state
-          "opacity-50 cursor-not-allowed bg-neutral-100 text-neutral-400 border-neutral-200": 
+          "opacity-50 cursor-not-allowed bg-neutral-200 text-neutral-500 border-neutral-300": 
             disabled,
           
           // Full width
@@ -55,7 +56,7 @@ const Button: FC<ButtonProps> = ({
         
         // Shadow effect for primary variant
         {
-          "shadow-sm hover:shadow": variant === "primary" && !disabled,
+          "shadow-sm hover:shadow-md active:shadow": variant === "primary" && !disabled,
         },
         
         className
