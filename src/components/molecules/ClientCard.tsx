@@ -14,16 +14,22 @@ const ClientCard: FC<ClientCardProps> = ({ client }) => {
 
   const statusConfig = {
     ok: {
-      color: "bg-success-50 text-success-700 border-success-100",
-      text: "V pořádku"
+      bg: "bg-emerald-50",
+      text: "text-emerald-700",
+      border: "border-emerald-100",
+      label: "V pořádku"
     },
     "missing-data": {
-      color: "bg-warning-50 text-warning-700 border-warning-100",
-      text: "Chybí data"
+      bg: "bg-amber-50",
+      text: "text-amber-700",
+      border: "border-amber-100",
+      label: "Chybí data"
     },
     inactive: {
-      color: "bg-neutral-50 text-neutral-700 border-neutral-100",
-      text: "Neaktivní"
+      bg: "bg-gray-50",
+      text: "text-gray-700",
+      border: "border-gray-200",
+      label: "Neaktivní"
     }
   };
 
@@ -31,17 +37,17 @@ const ClientCard: FC<ClientCardProps> = ({ client }) => {
 
   return (
     <div
-      className="group bg-white border border-neutral-200 rounded-lg p-4 hover:border-neutral-300 transition-all duration-200 cursor-pointer"
       onClick={() =>
         navigate(ROUTES.CLIENT.DASHBOARD.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`))
       }
+      className="group bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 hover:shadow-sm transition-all duration-200 cursor-pointer"
     >
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h2 className="text-lg font-medium text-neutral-900 group-hover:text-neutral-700 transition-colors">
+          <h2 className="text-lg font-medium text-gray-900">
             {client.name}
           </h2>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-gray-500">
             Naposledy upraveno:{" "}
             {new Date(client.lastUpdatedAt).toLocaleDateString("cs-CZ")}
           </p>
@@ -49,15 +55,14 @@ const ClientCard: FC<ClientCardProps> = ({ client }) => {
 
         <div className="flex items-center gap-3">
           <span
-            className={`px-3 py-1.5 text-sm font-medium rounded-lg border ${
-              status.color
-            }`}
+            className={`px-3 py-1.5 text-sm font-medium rounded-lg border
+              ${status.bg} ${status.text} ${status.border}`}
           >
-            {status.text}
+            {status.label}
           </span>
           
           <ArrowRight 
-            className="w-5 h-5 text-neutral-400 group-hover:text-neutral-900 transition-colors" 
+            className="w-5 h-5 text-gray-400 group-hover:text-gray-900 transition-colors" 
           />
         </div>
       </div>
