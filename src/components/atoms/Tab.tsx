@@ -26,19 +26,26 @@ const Tab: FC<TabProps> = ({ id, name }) => {
   };
 
   const active = activeTab === id;
+  
   return (
     <div
       className={clsx(
-        "flex items-center gap-2 px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors duration-150",
+        "flex items-center gap-2 px-4 py-2 text-sm rounded-lg cursor-pointer",
+        "transition-all duration-200 ease-in-out",
+        "border",
         active
-          ? "bg-white text-neutral-900 shadow-sm"
-          : "bg-neutral-700 text-neutral-200 hover:bg-neutral-600"
+          ? "bg-white text-gray-900 border-gray-200 shadow-sm"
+          : "bg-gray-50 text-gray-600 border-transparent hover:bg-gray-100"
       )}
       onClick={handleClick}
     >
-      <span className="truncate max-w-[100px]">{name}</span>
+      <span className="truncate max-w-[120px] font-medium">{name}</span>
       <button
-        className="hover:text-error-500 text-neutral-400 transition-colors duration-150"
+        className={clsx(
+          "p-0.5 rounded-full transition-colors duration-200",
+          "hover:bg-gray-100 active:bg-gray-200",
+          active ? "text-gray-400 hover:text-red-500" : "text-gray-400 hover:text-gray-600"
+        )}
         onClick={(e) => {
           e.stopPropagation();
           handleClose();
