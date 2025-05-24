@@ -26,15 +26,15 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-2">Wudget</h1>
-          <p className="text-primary-100">Správa financí pro profesionály</p>
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-5xl font-bold text-white">Wudget</h1>
+          <p className="text-lg text-neutral-400">Správa financí pro profesionály</p>
         </div>
 
-        <Paper className="p-8 rounded-xl shadow-xl">
+        <div className="bg-neutral-800 rounded-xl border border-neutral-700 p-8 shadow-2xl">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="relative">
                 <TextField
                   label="E-mail"
@@ -50,7 +50,7 @@ const Login = () => {
                   })}
                   error={errors.email?.message}
                 />
-                <Mail className="absolute left-3 top-[34px] h-5 w-5 text-neutral-400" />
+                <Mail className="absolute left-3 top-[34px] h-5 w-5 text-neutral-500" />
               </div>
 
               <div className="relative">
@@ -64,19 +64,19 @@ const Login = () => {
                   })}
                   error={errors.password?.message}
                 />
-                <LockKeyhole className="absolute left-3 top-[34px] h-5 w-5 text-neutral-400" />
+                <LockKeyhole className="absolute left-3 top-[34px] h-5 w-5 text-neutral-500" />
               </div>
             </div>
 
             <Button 
               type="submit" 
-              className="w-full py-2.5"
+              className="w-full py-3"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Přihlašování..." : "Přihlásit se"}
             </Button>
           </form>
-        </Paper>
+        </div>
       </div>
     </div>
   );

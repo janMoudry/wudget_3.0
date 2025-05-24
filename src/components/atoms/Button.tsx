@@ -16,15 +16,15 @@ const Button: FC<ButtonProps> = ({
   return (
     <button
       className={clsx(
-        "inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-full",
+        "inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-lg",
         "transition-all duration-200 ease-out",
-        "focus:outline-none focus:ring-2 focus:ring-offset-2",
+        "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900",
         {
-          "bg-primary-500 text-black hover:bg-primary-400 hover:scale-105 focus:ring-primary-500":
+          "bg-primary-500 text-neutral-900 hover:bg-primary-400 active:bg-primary-600 focus:ring-primary-500":
             variant === "primary" && !disabled,
-          "bg-white/10 text-white hover:bg-white/20 hover:scale-105 focus:ring-white":
+          "bg-neutral-700 text-white hover:bg-neutral-600 active:bg-neutral-800 focus:ring-neutral-400":
             variant === "secondary" && !disabled,
-          "text-white hover:text-primary-400 bg-transparent hover:scale-105":
+          "text-primary-400 hover:text-primary-300 bg-transparent":
             variant === "tertiary" && !disabled,
           "opacity-50 cursor-not-allowed": disabled,
         },
