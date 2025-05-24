@@ -20,13 +20,20 @@ const Button: FC<ButtonProps> = ({
         "transition-all duration-200 ease-out",
         "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900",
         {
-          "bg-primary-500 text-neutral-900 hover:bg-primary-400 active:bg-primary-600 focus:ring-primary-500":
+          // Primary variant - Spotify-like green
+          "bg-primary-500 text-white hover:bg-primary-400 active:bg-primary-600 focus:ring-primary-500":
             variant === "primary" && !disabled,
-          "bg-neutral-700 text-white hover:bg-neutral-600 active:bg-neutral-800 focus:ring-neutral-400":
+          
+          // Secondary variant - Light on dark
+          "bg-white/10 text-white hover:bg-white/20 active:bg-white/5 focus:ring-white/30":
             variant === "secondary" && !disabled,
-          "text-primary-400 hover:text-primary-300 bg-transparent":
+          
+          // Tertiary variant - Minimal style
+          "text-white hover:text-primary-400 bg-transparent hover:bg-white/5":
             variant === "tertiary" && !disabled,
-          "opacity-50 cursor-not-allowed": disabled,
+          
+          // Disabled state
+          "opacity-50 cursor-not-allowed bg-neutral-700 text-neutral-400": disabled,
         },
         className
       )}
