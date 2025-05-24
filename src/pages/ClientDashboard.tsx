@@ -1,254 +1,289 @@
+// src/pages/ClientDashboard.tsx
 import { useEffect, useState } from "react";
 import { useTab } from "../hooks/useTab";
 import { Typography, Paper, Button } from "../components";
-import { FileText, CreditCard } from "lucide-react";
+import { FileText, CreditCard, TrendingUp, Wallet, ArrowDownUp } from "lucide-react";
 import {
-	BarChart,
-	Bar,
-	XAxis,
-	YAxis,
-	CartesianGrid,
-	Tooltip,
-	ResponsiveContainer,
-	Legend,
-	LineChart,
-	Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+  LineChart,
+  Line,
 } from "recharts";
 
 const ClientDashboard = () => {
-	const { client } = useTab();
-	const [overview, setOverview] = useState<{
-		balance: number;
-		stats: {
-			totalIncome: number;
-			totalExpense: number;
-			totalTransactions: number;
-		};
-		chartData: {
-			byDay: { date: string; income: number; expense: number }[];
-			byCategory: { category: string; total: number; type: string }[];
-		};
-		labels: {
-			mostUsedCategory: string;
-			highestIncome: string;
-			highestExpense: string;
-		};
-	} | null>(null);
+  const { client } = useTab();
+  const [overview, setOverview] = useState<{
+    balance: number;
+    stats: {
+      totalIncome: number;
+      totalExpense: number;
+      totalTransactions: number;
+    };
+    chartData: {
+      byDay: { date: string; income: number; expense: number }[];
+      byCategory: { category: string; total: number; type: string }[];
+    };
+    labels: {
+      mostUsedCategory: string;
+      highestIncome: string;
+      highestExpense: string;
+    };
+  } | null>(null);
 
-	useEffect(() => {
-		const fetchOverview = async () => {
-			try {
-				const res = await fetch("http://localhost:3001/overview");
-				const json = await res.json();
-				const normalized = {
-					...json,
-					chartData: {
-						byDay: json.chartData.byDay.map(
-							(entry: { expense: number }) => ({
-								...entry,
-								expense: Math.abs(entry.expense),
-							})
-						),
-						byCategory: json.chartData.byCategory
-							.filter(
-								(entry: { type: string }) =>
-									entry.type === "expense"
-							)
-							.map((entry: { total: number }) => ({
-								...entry,
-								total: Math.abs(entry.total),
-							})),
-					},
-				};
-				setOverview(normalized);
-			} catch (err) {
-				console.error("Chyba při načítání přehledu:", err);
-			}
-		};
+  useEffect(() => {
+    const fetchOverview = async () => {
+      try {
+        const res = await fetch("http://localhost:3001/overview");
+        const json = await res.json();
+        const normalized = {
+          ...json,
+          chartData: {
+            byDay: json.chartData.byDay.map(
+              (entry: { expense: number }) => ({
+                ...entry,
+                expense: Math.abs(entry.expense),
+              })
+            ),
+            byCategory: json.chartData.byCategory
+              .filter((entry: { type: string }) => entry.type === "expense")
+              .map((entry: { total: number }) => ({
+                ...entry,
+                total: Math.abs(entry.total),
+              })),
+          },
+        };
+        setOverview(normalized);
+      } catch (err) {
+        console.error("Chyba při načítání přehledu:", err);
+      }
+    };
 
-		fetchOverview();
-	}, []);
+    fetchOverview();
+  }, []);
 
-	return (
-		<div className="p-6 space-y-6 bg-gray-50 min-h-[calc(100vh-3.5rem)]">
-			<div className="flex items-center justify-between flex-wrap gap-4">
-				<div>
-					<Typography variant="h2" className="mb-1">
-						Přehled klienta: {client?.name}
-					</Typography>
-					<Typography variant="small" className="text-gray-500">
-						Přehled vystavených výpisů a transakcí
-					</Typography>
-				</div>
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <TrendingUp className="w-5 h-5 text-gray-900" />
+            </div>
+            <Typography variant="h2" className="text-gray-900">
+              {client?.name}
+            </Typography>
+          </div>
+          <Typography variant="small" className="text-gray-500">
+            Přehled vystavených výpisů a transakcí
+          </Typography>
+        </div>
 
-				<div className="flex gap-2">
-					<Button variant="primary">
-						<FileText size={16} className="mr-1" /> Výpisy
-					</Button>
-					<Button variant="secondary">
-						<CreditCard size={16} className="mr-1" /> Transakce
-					</Button>
-				</div>
-			</div>
+        <div className="flex gap-2">
+          <Button variant="secondary">
+            <FileText size={16} className="mr-2" /> Výpisy
+          </Button>
+          <Button variant="primary">
+            <CreditCard size={16} className="mr-2" /> Transakce
+          </Button>
+        </div>
+      </div>
 
-			{overview && (
-				<>
-					{/* Bilance + porovnání příjmů a výdajů */}
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						<Paper className="p-4">
-							<Typography variant="h3" className="mb-1">
-								Celková bilance
-							</Typography>
-							<p
-								className={`text-2xl font-semibold ${
-									overview.balance >= 0
-										? "text-green-600"
-										: "text-red-600"
-								}`}
-							>
-								{overview.balance.toLocaleString("cs-CZ", {
-									style: "currency",
-									currency: "CZK",
-								})}
-							</p>
-							<p className="text-sm text-gray-500 mt-1">
-								Počet transakcí:{" "}
-								{overview.stats.totalTransactions}
-							</p>
-						</Paper>
+      {overview && (
+        <>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Paper className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-green-50 rounded-lg">
+                  <ArrowDownUp className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <Typography variant="small" className="text-gray-500 mb-1">
+                    Celková bilance
+                  </Typography>
+                  <Typography
+                    variant="h3"
+                    className={overview.balance >= 0 ? "text-green-600" : "text-red-600"}
+                  >
+                    {overview.balance.toLocaleString("cs-CZ", {
+                      style: "currency",
+                      currency: "CZK",
+                    })}
+                  </Typography>
+                </div>
+              </div>
+            </Paper>
 
-						<Paper className="p-4">
-							<Typography variant="h3" className="mb-4">
-								Porovnání příjmů a výdajů
-							</Typography>
-							<ResponsiveContainer width="100%" height={200}>
-								<BarChart
-									data={[overview.stats]}
-									layout="vertical"
-									margin={{
-										top: 10,
-										right: 30,
-										left: 0,
-										bottom: 10,
-									}}
-								>
-									<CartesianGrid strokeDasharray="3 3" />
-									<XAxis type="number" />
-									<YAxis
-										type="category"
-										dataKey={() => ""}
-										hide
-									/>
-									<Tooltip
-										formatter={(value) =>
-											Number(value).toLocaleString(
-												"cs-CZ",
-												{
-													style: "currency",
-													currency: "CZK",
-												}
-											)
-										}
-									/>
-									<Legend />
-									<Bar
-										dataKey="totalIncome"
-										fill="#4ade80"
-										name="Příjmy"
-									/>
-									<Bar
-										dataKey="totalExpense"
-										fill="#f87171"
-										name="Výdaje"
-									/>
-								</BarChart>
-							</ResponsiveContainer>
-						</Paper>
-					</div>
+            <Paper className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-blue-50 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <Typography variant="small" className="text-gray-500 mb-1">
+                    Příjmy
+                  </Typography>
+                  <Typography variant="h3" className="text-gray-900">
+                    {overview.stats.totalIncome.toLocaleString("cs-CZ", {
+                      style: "currency",
+                      currency: "CZK",
+                    })}
+                  </Typography>
+                </div>
+              </div>
+            </Paper>
 
-					{/* Vývoj příjmů a výdajů v čase */}
-					<Paper className="p-6 w-full">
-						<Typography variant="h3" className="mb-4">
-							Vývoj příjmů a výdajů v čase
-						</Typography>
-						<ResponsiveContainer width="100%" height={300}>
-							<LineChart data={overview.chartData.byDay}>
-								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis dataKey="date" />
-								<YAxis />
-								<Tooltip />
-								<Legend />
-								<Line
-									type="monotone"
-									dataKey="income"
-									stroke="#4ade80"
-									name="Příjmy"
-								/>
-								<Line
-									type="monotone"
-									dataKey="expense"
-									stroke="#f87171"
-									name="Výdaje"
-								/>
-							</LineChart>
-						</ResponsiveContainer>
-					</Paper>
+            <Paper className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-red-50 rounded-lg">
+                  <Wallet className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <Typography variant="small" className="text-gray-500 mb-1">
+                    Výdaje
+                  </Typography>
+                  <Typography variant="h3" className="text-gray-900">
+                    {Math.abs(overview.stats.totalExpense).toLocaleString("cs-CZ", {
+                      style: "currency",
+                      currency: "CZK",
+                    })}
+                  </Typography>
+                </div>
+              </div>
+            </Paper>
 
-					{/* Kategorie výdajů */}
-					<Paper className="p-6 w-full">
-						<Typography variant="h3" className="mb-4">
-							Výdaje podle kategorií
-						</Typography>
-						<ResponsiveContainer width="100%" height={300}>
-							<BarChart
-								data={overview.chartData.byCategory}
-								layout="vertical"
-							>
-								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis type="number" />
-								<YAxis
-									dataKey="category"
-									type="category"
-									width={100}
-								/>
-								<Tooltip />
-								<Bar
-									dataKey="total"
-									fill="#8884d8"
-									name="Výdaje"
-								/>
-							</BarChart>
-						</ResponsiveContainer>
-					</Paper>
+            <Paper className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-purple-50 rounded-lg">
+                  <CreditCard className="w-6 h-6 text-purple-600" />
+                </div>
+                <div>
+                  <Typography variant="small" className="text-gray-500 mb-1">
+                    Počet transakcí
+                  </Typography>
+                  <Typography variant="h3" className="text-gray-900">
+                    {overview.stats.totalTransactions}
+                  </Typography>
+                </div>
+              </div>
+            </Paper>
+          </div>
 
-					{/* Další info */}
-					<Paper className="p-4">
-						<Typography variant="h3" className="mb-1">
-							Další info
-						</Typography>
-						<ul className="text-sm text-gray-700 space-y-1">
-							<li>
-								Nejčastější kategorie:{" "}
-								<strong>
-									{overview.labels.mostUsedCategory}
-								</strong>
-							</li>
-							<li>
-								Největší příjem:{" "}
-								<strong>{overview.labels.highestIncome}</strong>
-							</li>
-							<li>
-								Největší výdaj:{" "}
-								<strong>
-									{overview.labels.highestExpense}
-								</strong>
-							</li>
-						</ul>
-					</Paper>
-				</>
-			)}
-		</div>
-	);
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Paper className="p-6">
+              <Typography variant="h3" className="mb-6">Vývoj v čase</Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={overview.chartData.byDay}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis dataKey="date" stroke="#6B7280" />
+                  <YAxis stroke="#6B7280" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "white",
+                      border: "1px solid #E5E7EB",
+                      borderRadius: "8px",
+                    }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="income"
+                    stroke="#10B981"
+                    name="Příjmy"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="expense"
+                    stroke="#EF4444"
+                    name="Výdaje"
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Paper>
+
+            <Paper className="p-6">
+              <Typography variant="h3" className="mb-6">Kategorie výdajů</Typography>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={overview.chartData.byCategory}
+                  layout="vertical"
+                  margin={{ top: 0, right: 0, left: 40, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis type="number" stroke="#6B7280" />
+                  <YAxis
+                    dataKey="category"
+                    type="category"
+                    stroke="#6B7280"
+                    width={100}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "white",
+                      border: "1px solid #E5E7EB",
+                      borderRadius: "8px",
+                    }}
+                    formatter={(value) =>
+                      Number(value).toLocaleString("cs-CZ", {
+                        style: "currency",
+                        currency: "CZK",
+                      })
+                    }
+                  />
+                  <Bar
+                    dataKey="total"
+                    fill="#6366F1"
+                    radius={[0, 4, 4, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </Paper>
+          </div>
+
+          {/* Additional Info */}
+          <Paper className="p-6">
+            <Typography variant="h3" className="mb-4">Další informace</Typography>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <Typography variant="small" className="text-gray-500">
+                  Nejčastější kategorie
+                </Typography>
+                <Typography variant="body" className="font-medium">
+                  {overview.labels.mostUsedCategory}
+                </Typography>
+              </div>
+              <div className="space-y-2">
+                <Typography variant="small" className="text-gray-500">
+                  Největší příjem
+                </Typography>
+                <Typography variant="body" className="font-medium text-green-600">
+                  {overview.labels.highestIncome}
+                </Typography>
+              </div>
+              <div className="space-y-2">
+                <Typography variant="small" className="text-gray-500">
+                  Největší výdaj
+                </Typography>
+                <Typography variant="body" className="font-medium text-red-600">
+                  {overview.labels.highestExpense}
+                </Typography>
+              </div>
+            </div>
+          </Paper>
+        </>
+      )}
+    </div>
+  );
 };
 
 export default ClientDashboard;
