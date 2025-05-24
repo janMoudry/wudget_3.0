@@ -20,7 +20,7 @@ const Button: FC<ButtonProps> = ({
   return (
     <button
       className={clsx(
-        "inline-flex items-center justify-center font-medium rounded-lg",
+        "inline-flex items-center justify-center font-semibold rounded-lg",
         "transition-all duration-200 ease-in-out",
         "focus:outline-none focus:ring-2 focus:ring-offset-2",
         "cursor-pointer",
@@ -28,8 +28,8 @@ const Button: FC<ButtonProps> = ({
         // Size variants
         {
           "px-3 py-1.5 text-sm": size === "sm",
-          "px-4 py-2.5 text-sm": size === "md",
-          "px-6 py-3 text-base": size === "lg",
+          "px-4 py-3 text-base": size === "md",
+          "px-6 py-4 text-lg": size === "lg",
         },
         
         // Style variants
@@ -54,9 +54,10 @@ const Button: FC<ButtonProps> = ({
           "w-full": fullWidth,
         },
         
-        // Shadow effect for primary variant
+        // Enhanced shadow and scale effect for primary variant
         {
-          "shadow-sm hover:shadow-md active:shadow": variant === "primary" && !disabled,
+          "shadow-lg hover:shadow-xl active:shadow transform hover:-translate-y-0.5 active:translate-y-0": 
+            variant === "primary" && !disabled,
         },
         
         className

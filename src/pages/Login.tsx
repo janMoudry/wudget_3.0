@@ -95,24 +95,20 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-neutral-300 text-primary-500 focus:ring-primary-500"
-                />
-                <label className="ml-2 text-sm text-neutral-600">
-                  Zapamatovat si mě
-                </label>
-              </div>
-              <button type="button" className="text-sm text-primary-600 hover:text-primary-500">
-                Zapomenuté heslo?
-              </button>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border-neutral-300 text-primary-500 focus:ring-primary-500"
+              />
+              <label className="ml-2 text-sm text-neutral-600">
+                Zapamatovat si mě
+              </label>
             </div>
 
             <Button 
               type="submit" 
               className="w-full"
+              size="lg"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Přihlašování..." : "Přihlásit se"}
