@@ -30,18 +30,16 @@ const Tab: FC<TabProps> = ({ id, name }) => {
   return (
     <div
       className={clsx(
-        "flex items-center gap-2 px-4 py-2 text-sm cursor-pointer",
+        "flex items-center gap-2 px-4 py-2 text-sm cursor-pointer rounded-lg",
         "transition-all duration-200 ease-in-out",
         active
           ? [
-              "bg-white text-gray-900",
-              "border-b-2 border-gray-900",
-              "font-medium",
+              "bg-gray-900 text-white",
+              "shadow-md",
             ]
           : [
-              "text-gray-400",
-              "hover:text-gray-600",
-              "border-b-2 border-transparent",
+              "bg-white text-gray-900",
+              "hover:bg-gray-100",
             ]
       )}
       onClick={handleClick}
@@ -51,8 +49,8 @@ const Tab: FC<TabProps> = ({ id, name }) => {
         className={clsx(
           "p-0.5 rounded-full transition-colors duration-200",
           active 
-            ? "text-gray-400 hover:text-gray-900" 
-            : "text-gray-400 hover:text-gray-600"
+            ? "text-gray-400 hover:text-white" 
+            : "text-gray-400 hover:text-gray-900"
         )}
         onClick={(e) => {
           e.stopPropagation();
