@@ -10,22 +10,27 @@ const Button: FC<ButtonProps> = ({
   children,
   variant = "primary",
   className,
+  disabled,
   ...rest
 }) => {
   return (
     <button
       className={clsx(
-        "inline-flex items-center justify-center px-4 py-2 cursor-pointer text-sm font-medium rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
+        "inline-flex items-center justify-center px-6 py-3 text-sm font-semibold rounded-full",
+        "transition-all duration-200 ease-out",
+        "focus:outline-none focus:ring-2 focus:ring-offset-2",
         {
-          "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm":
-            variant === "primary",
-          "bg-white text-neutral-800 border border-neutral-300 hover:bg-neutral-50 focus:ring-primary-500 shadow-sm":
-            variant === "secondary",
-          "text-primary-600 hover:text-primary-700 hover:bg-primary-50 bg-transparent":
-            variant === "tertiary",
+          "bg-primary-500 text-black hover:bg-primary-400 hover:scale-105 focus:ring-primary-500":
+            variant === "primary" && !disabled,
+          "bg-white/10 text-white hover:bg-white/20 hover:scale-105 focus:ring-white":
+            variant === "secondary" && !disabled,
+          "text-white hover:text-primary-400 bg-transparent hover:scale-105":
+            variant === "tertiary" && !disabled,
+          "opacity-50 cursor-not-allowed": disabled,
         },
         className
       )}
+      disabled={disabled}
       {...rest}
     >
       {children}

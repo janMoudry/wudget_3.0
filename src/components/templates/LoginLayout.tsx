@@ -14,10 +14,10 @@ const LoginLayout = () => {
   }, [navigate, user]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-600 to-primary-800">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-primary-400/20 to-transparent rounded-full blur-3xl transform rotate-12" />
-        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-primary-900/30 to-transparent rounded-full blur-3xl" />
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-primary-500/20 to-transparent rounded-full blur-3xl transform rotate-12" />
+        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-primary-500/10 to-transparent rounded-full blur-3xl" />
       </div>
 
       <Suspense fallback={

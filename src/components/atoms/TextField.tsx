@@ -10,22 +10,23 @@ const TextField: FC<TextFieldProps> = ({ label, error, className, ...rest }) => 
   return (
     <div className="flex flex-col space-y-1">
       {label && (
-        <label className="text-sm font-medium text-neutral-700">{label}</label>
+        <label className="text-sm font-medium text-neutral-300">{label}</label>
       )}
       <input
         className={clsx(
-          "px-3 py-2 border rounded-md text-sm bg-white",
+          "px-4 py-3 rounded-lg text-sm",
+          "bg-neutral-800/50 text-white border-2 border-neutral-700",
           "transition-all duration-200",
-          "placeholder:text-neutral-400",
-          "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500",
+          "placeholder:text-neutral-500",
+          "focus:outline-none focus:border-primary-500",
           error
-            ? "border-error-500 focus:ring-error-500 focus:border-error-500"
-            : "border-neutral-300",
+            ? "border-error-500 focus:border-error-500"
+            : "hover:border-neutral-600",
           className
         )}
         {...rest}
       />
-      {error && <span className="text-xs text-error-600">{error}</span>}
+      {error && <span className="text-xs text-error-400">{error}</span>}
     </div>
   );
 };
