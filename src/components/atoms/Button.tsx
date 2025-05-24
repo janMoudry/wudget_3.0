@@ -34,8 +34,8 @@ const Button: FC<ButtonProps> = ({
         
         // Style variants
         {
-          // Primary - Spotify-like green
-          "bg-primary-500 text-white hover:bg-primary-400 active:bg-primary-600 focus:ring-primary-500":
+          // Primary
+          "bg-primary-500 text-neutral-900 hover:bg-primary-400 active:bg-primary-600 focus:ring-primary-500":
             variant === "primary" && !disabled,
           
           // Secondary

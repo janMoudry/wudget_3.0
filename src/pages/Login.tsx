@@ -26,13 +26,27 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left side - Image/Welcome */}
+      {/* Left side - Promo */}
       <div className="hidden lg:flex lg:w-1/2 bg-neutral-800 text-white items-center justify-center p-12">
         <div className="max-w-md">
-          <h1 className="text-4xl font-bold mb-4">Welcome back!</h1>
-          <p className="text-neutral-400 text-lg">
-            Sign in to Born Digital application and access our features.
+          <h1 className="text-4xl font-bold mb-6">Wudget</h1>
+          <p className="text-2xl font-medium mb-4 text-primary-400">
+            Správce osobních financí pro všechny
           </p>
+          <div className="space-y-4 text-neutral-400">
+            <p>
+              Wudget je moderní nástroj pro správu osobních i firemních financí, který vám pomůže mít přehled o všech vašich příjmech a výdajích.
+            </p>
+            <p>
+              Ať už jste finanční poradce nebo běžný uživatel, Wudget vám nabízí:
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li>Automatické kategorizace transakcí</li>
+              <li>Přehledné reporty a analýzy</li>
+              <li>Napojení na všechny české banky</li>
+              <li>Bezpečné šifrování dat</li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -40,9 +54,9 @@ const Login = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md space-y-8">
           <div>
-            <h2 className="text-3xl font-bold text-neutral-900">Sign in</h2>
+            <h2 className="text-3xl font-bold text-neutral-900">Přihlášení</h2>
             <p className="mt-2 text-neutral-600">
-              Please enter your credentials to continue
+              Zadejte své přihlašovací údaje pro pokračování
             </p>
           </div>
 
@@ -52,13 +66,13 @@ const Login = () => {
                 <TextField
                   label="Email"
                   type="email"
-                  placeholder="name@company.com"
+                  placeholder="vas@email.cz"
                   className="pl-10 bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-500"
                   {...register("email", { 
-                    required: "Email is required",
+                    required: "Email je povinný",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email format"
+                      message: "Neplatný formát emailu"
                     }
                   })}
                   error={errors.email?.message}
@@ -68,12 +82,12 @@ const Login = () => {
 
               <div className="relative">
                 <TextField
-                  label="Password"
+                  label="Heslo"
                   type="password"
                   placeholder="••••••••"
                   className="pl-10 bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-500"
                   {...register("password", { 
-                    required: "Password is required"
+                    required: "Heslo je povinné"
                   })}
                   error={errors.password?.message}
                 />
@@ -88,20 +102,20 @@ const Login = () => {
                   className="h-4 w-4 rounded border-neutral-300 text-primary-500 focus:ring-primary-500"
                 />
                 <label className="ml-2 text-sm text-neutral-600">
-                  Remember me
+                  Zapamatovat si mě
                 </label>
               </div>
               <button type="button" className="text-sm text-primary-600 hover:text-primary-500">
-                Forgot password?
+                Zapomenuté heslo?
               </button>
             </div>
 
             <Button 
               type="submit" 
-              className="w-full bg-primary-600 hover:bg-primary-500"
+              className="w-full"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Signing in..." : "Sign in"}
+              {isSubmitting ? "Přihlašování..." : "Přihlásit se"}
             </Button>
           </form>
         </div>
