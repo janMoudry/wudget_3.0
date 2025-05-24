@@ -2,7 +2,7 @@
 import { useClients } from "../api/getClients";
 import { ClientCard } from "../components/molecules";
 import { Button, TextField, Typography } from "../components";
-import { Filter, Search, Users } from "lucide-react";
+import { Search, Users } from "lucide-react";
 import { useState } from "react";
 
 const Clients = () => {
@@ -35,7 +35,7 @@ const Clients = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-gray-100 rounded-lg">
             <Users className="w-5 h-5 text-gray-900" />
@@ -49,11 +49,6 @@ const Clients = () => {
             </Typography>
           </div>
         </div>
-
-        <Button variant="primary">
-          <Filter className="w-4 h-4 mr-2" />
-          Filtrovat
-        </Button>
       </div>
 
       {/* Search and Filters */}
