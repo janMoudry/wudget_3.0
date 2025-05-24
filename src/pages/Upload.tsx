@@ -15,11 +15,11 @@ const Upload = () => {
     accept: {
       "text/csv": [".csv"],
     },
-    multiple: true,
+    multiple: false,
   });
 
-  const handleRemoveFile = (fileToRemove: File) => {
-    acceptedFiles.splice(acceptedFiles.indexOf(fileToRemove), 1);
+  const handleRemoveFile = () => {
+    acceptedFiles.splice(0, acceptedFiles.length);
   };
 
   const handleUpload = async () => {
@@ -28,26 +28,24 @@ const Upload = () => {
     setUploadStatus({ status: "uploading" });
 
     try {
-      for (const file of acceptedFiles) {
-        const formData = new FormData();
-        formData.append("file", file);
+      const formData = new FormData();
+      formData.append("file", acceptedFiles[0]);
 
-        const response = await fetch(`http://localhost:3001/upload?bank=${bank}`, {
-          method: "POST",
-          body: formData,
-        });
+      const response = await fetch(`http://localhost:3001/upload?bank=${bank}`, {
+        method: "POST",
+        body: formData,
+      });
 
-        if (!response.ok) throw new Error("Upload failed");
-      }
+      if (!response.ok) throw new Error("Upload failed");
 
       setUploadStatus({
         status: "success",
-        message: `Úspěšně nahráno ${acceptedFiles.length} souborů`,
+        message: "Soubor byl úspěšně nahrán",
       });
     } catch (error) {
       setUploadStatus({
         status: "error",
-        message: "Chyba při nahrávání souborů",
+        message: "Chyba při nahrávání souboru",
       });
     }
   };
@@ -65,7 +63,7 @@ const Upload = () => {
           </Typography>
         </div>
         <Typography variant="small" className="text-gray-500">
-          Nahrajte výpisy z účtu pro zpracování transakcí
+          Nahrajte výpis z účtu pro zpracování transakcí
         </Typography>
       </div>
 
@@ -97,7 +95,7 @@ const Upload = () => {
       {bank && (
         <Paper className="p-6">
           <Typography variant="h3" className="mb-4">
-            Nahrát soubory
+            Nahrát soubor
           </Typography>
 
           {/* Dropzone */}
@@ -121,8 +119,8 @@ const Upload = () => {
             />
             <Typography variant="body" className="mb-2">
               {isDragActive
-                ? "Pusťte soubory pro nahrání"
-                : "Přetáhněte soubory sem nebo klikněte pro výběr"}
+                ? "Pusťte soubor pro nahrání"
+                : "Přetáhněte soubor sem nebo klikněte pro výběr"}
             </Typography>
             <Typography variant="small" className="text-gray-500">
               Podporované formáty: CSV
@@ -133,33 +131,28 @@ const Upload = () => {
           {acceptedFiles.length > 0 && (
             <div className="mt-6 space-y-3">
               <Typography variant="h3" className="text-sm font-medium text-gray-700">
-                Vybrané soubory ({acceptedFiles.length})
+                Vybraný soubor
               </Typography>
               <div className="space-y-2">
-                {acceptedFiles.map((file) => (
-                  <div
-                    key={file.name}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {file.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {(file.size / 1024).toFixed(1)} KB
-                        </p>
-                      </div>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {acceptedFiles[0].name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {(acceptedFiles[0].size / 1024).toFixed(1)} KB
+                      </p>
                     </div>
-                    <button
-                      onClick={() => handleRemoveFile(file)}
-                      className="p-1 hover:bg-gray-200 rounded-full transition-colors"
-                    >
-                      <X className="w-4 h-4 text-gray-500" />
-                    </button>
                   </div>
-                ))}
+                  <button
+                    onClick={handleRemoveFile}
+                    className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+                  >
+                    <X className="w-4 h-4 text-gray-500" />
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -170,7 +163,7 @@ const Upload = () => {
               <div className="flex items-center gap-2 text-red-800 mb-2">
                 <AlertCircle className="w-5 h-5" />
                 <Typography variant="body" className="font-medium">
-                  Nepodporované soubory
+                  Nepodporovaný soubor
                 </Typography>
               </div>
               <ul className="text-sm text-red-700 list-disc list-inside">
@@ -223,7 +216,7 @@ const Upload = () => {
               ) : (
                 <>
                   <UploadIcon className="w-4 h-4 mr-2" />
-                  Nahrát {acceptedFiles.length} {acceptedFiles.length === 1 ? "soubor" : "soubory"}
+                  Nahrát soubor
                 </>
               )}
             </Button>
