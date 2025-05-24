@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"install": "npm install && cd wudget_be && npm install",
+		"postinstall": "cd wudget_be && npm install",
 		"dev": "concurrently \"vite\" \"node ./wudget_be/index.js\"",
 		"dev-be": "node ./wudget_be/index.js",
 		"build": "tsc -b && vite build",
