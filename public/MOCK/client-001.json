@@ -1,0 +1,12 @@
+{
+	"id": "client-001",
+	"name": "Petr Novák",
+	"email": "petr.novak@example.com",
+	"phone": "+420 602 123 456",
+	"company": "Novák consulting s.r.o.",
+	"createdAt": "2024-12-01T10:15:00Z",
+	"lastUpdatedAt": "2025-05-20T08:25:00Z",
+	"status": "ok",
+	"notes": "Klient má pravidelné výpisy. Poslední audit bez připomínek.",
+	"tags": ["aktivní", "VIP", "dlouhodobý"]
+}

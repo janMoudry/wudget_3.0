@@ -1,0 +1,12 @@
+{
+	"id": "client-003",
+	"name": "Tomáš Horák",
+	"email": "tomas.horak@example.com",
+	"phone": "+420 605 321 987",
+	"company": "Horák Technologies",
+	"createdAt": "2022-07-14T12:00:00Z",
+	"lastUpdatedAt": "2025-02-10T09:00:00Z",
+	"status": "inactive",
+	"notes": "Neaktivní klient – naposledy aktivní v prosinci 2024.",
+	"tags": ["neaktivní", "IT", "bývalý klient"]
+}

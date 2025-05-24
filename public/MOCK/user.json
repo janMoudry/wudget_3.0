@@ -1,0 +1,18 @@
+{
+	"id": "user-001",
+	"name": "Jan Moudrý",
+	"email": "jan@wudget.dev",
+	"token": "mock-jwt-token-1234567890",
+	"clients": [
+		{
+			"id": "client-001",
+			"name": "Petr Novák",
+			"status": "ok"
+		},
+		{
+			"id": "client-002",
+			"name": "Lucie Černá",
+			"status": "missing-data"
+		}
+	]
+}

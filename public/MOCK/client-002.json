@@ -1,0 +1,12 @@
+{
+	"id": "client-002",
+	"name": "Lucie Černá",
+	"email": "lucie.cerna@example.com",
+	"phone": "+420 734 888 777",
+	"company": "Černá Reality s.r.o.",
+	"createdAt": "2023-03-21T09:30:00Z",
+	"lastUpdatedAt": "2025-04-15T17:42:00Z",
+	"status": "missing-data",
+	"notes": "Zatím chybí výpisy za poslední 3 měsíce.",
+	"tags": ["chybí výpis", "potenciál", "realitka"]
+}

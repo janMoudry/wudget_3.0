@@ -1,0 +1,27 @@
+export type ClientDetail = {
+	id: string;
+	name: string;
+	email: string;
+	phone?: string;
+	company?: string;
+	createdAt: string;
+	lastUpdatedAt: string;
+	status: "ok" | "missing-data" | "inactive";
+	notes?: string;
+	tags?: string[];
+};
+
+import { useQuery } from "@tanstack/react-query";
+
+const getClient = async (id: string): Promise<ClientDetail> => {
+	const res = await fetch(`/MOCK/${id}.json`);
+	if (!res.ok) throw new Error("Nepodařilo se načíst detail klienta");
+	return res.json();
+};
+
+export const useClient = (id: string) =>
+	useQuery({
+		queryKey: ["client", id],
+		queryFn: () => getClient(id),
+		enabled: !!id,
+	});
