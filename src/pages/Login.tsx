@@ -1,4 +1,4 @@
-import { Button, Paper, TextField, Typography } from "@components";
+import { Button, TextField, Typography } from "@components";
 import { useCallback } from "react";
 import { useAuth } from "@hooks";
 import { useForm } from "react-hook-form";
@@ -25,55 +25,83 @@ const Login = () => {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-5xl font-bold text-white">Wudget</h1>
-          <p className="text-lg text-neutral-400">Správa financí pro profesionály</p>
+    <div className="min-h-screen flex">
+      {/* Left side - Image/Welcome */}
+      <div className="hidden lg:flex lg:w-1/2 bg-neutral-800 text-white items-center justify-center p-12">
+        <div className="max-w-md">
+          <h1 className="text-4xl font-bold mb-4">Welcome back!</h1>
+          <p className="text-neutral-400 text-lg">
+            Sign in to Born Digital application and access our features.
+          </p>
         </div>
+      </div>
 
-        <div className="bg-neutral-800 rounded-xl border border-neutral-700 p-8 shadow-2xl">
+      {/* Right side - Login form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-md space-y-8">
+          <div>
+            <h2 className="text-3xl font-bold text-neutral-900">Sign in</h2>
+            <p className="mt-2 text-neutral-600">
+              Please enter your credentials to continue
+            </p>
+          </div>
+
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-5">
               <div className="relative">
                 <TextField
-                  label="E-mail"
+                  label="Email"
                   type="email"
-                  placeholder="jan@example.com"
-                  className="pl-10"
+                  placeholder="name@company.com"
+                  className="pl-10 bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-500"
                   {...register("email", { 
-                    required: "E-mail je povinný",
+                    required: "Email is required",
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Neplatný formát e-mailu"
+                      message: "Invalid email format"
                     }
                   })}
                   error={errors.email?.message}
                 />
-                <Mail className="absolute left-3 top-[34px] h-5 w-5 text-neutral-500" />
+                <Mail className="absolute left-3 top-[34px] h-5 w-5 text-neutral-400" />
               </div>
 
               <div className="relative">
                 <TextField
-                  label="Heslo"
+                  label="Password"
                   type="password"
                   placeholder="••••••••"
-                  className="pl-10"
+                  className="pl-10 bg-white border-neutral-300 text-neutral-900 placeholder:text-neutral-500"
                   {...register("password", { 
-                    required: "Heslo je povinné"
+                    required: "Password is required"
                   })}
                   error={errors.password?.message}
                 />
-                <LockKeyhole className="absolute left-3 top-[34px] h-5 w-5 text-neutral-500" />
+                <LockKeyhole className="absolute left-3 top-[34px] h-5 w-5 text-neutral-400" />
               </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-neutral-300 text-primary-500 focus:ring-primary-500"
+                />
+                <label className="ml-2 text-sm text-neutral-600">
+                  Remember me
+                </label>
+              </div>
+              <button type="button" className="text-sm text-primary-600 hover:text-primary-500">
+                Forgot password?
+              </button>
             </div>
 
             <Button 
               type="submit" 
-              className="w-full py-3"
+              className="w-full bg-primary-600 hover:bg-primary-500"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Přihlašování..." : "Přihlásit se"}
+              {isSubmitting ? "Signing in..." : "Sign in"}
             </Button>
           </form>
         </div>
