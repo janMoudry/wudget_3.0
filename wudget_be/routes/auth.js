@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import db from "../db/index.js";
 
 const router = express.Router();
-const JWT_SECRET = "your-secret-key"; // TODO: Use process.env in production
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // Fallback for development
 
 router.post("/", async (req, res) => {
   try {
@@ -20,19 +20,20 @@ router.post("/", async (req, res) => {
     ]);
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Incorrect email" });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Incorrect password" });
     }
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
       expiresIn: "24h",
     });
 
+    // Remove password from user object before sending response
     const { password: _, ...userData } = user;
 
     res.json({
