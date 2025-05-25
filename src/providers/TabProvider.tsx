@@ -109,3 +109,5 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
     </TabContext.Provider>
   );
 };
+
+export default TabProvider;
