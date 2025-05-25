@@ -75,7 +75,7 @@ const Upload = () => {
         </Typography>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {["airbank", "kb", "csob", "fio"].map((bankName) => (
-            <button
+            <Button
               key={bankName}
               onClick={() => setBank(bankName)}
               className={clsx(
@@ -87,7 +87,7 @@ const Upload = () => {
               )}
             >
               <span className="capitalize">{bankName}</span>
-            </button>
+            </Button>
           ))}
         </div>
       </Paper>
