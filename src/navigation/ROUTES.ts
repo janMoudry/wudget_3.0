@@ -1,4 +1,3 @@
-```typescript```
 export const ROUTES = {
   LOGIN: "/login",
 
