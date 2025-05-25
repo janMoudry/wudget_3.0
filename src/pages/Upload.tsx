@@ -19,11 +19,12 @@ const Upload = () => {
   });
 
   const handleRemoveFile = () => {
-    acceptedFiles.splice(0, acceptedFiles.length);
+    // Create a new FileList-like object without the files
+    Object.assign(acceptedFiles, { length: 0 });
   };
 
   const handleUpload = async () => {
-    if (!bank || acceptedFiles.length === 0) return;
+    if (!bank || !acceptedFiles || acceptedFiles.length === 0) return;
 
     setUploadStatus({ status: "uploading" });
 
@@ -128,7 +129,7 @@ const Upload = () => {
           </div>
 
           {/* File List */}
-          {acceptedFiles.length > 0 && (
+          {acceptedFiles && acceptedFiles.length > 0 && (
             <div className="mt-6 space-y-3">
               <Typography variant="h3" className="text-sm font-medium text-gray-700">
                 Vybraný soubor
@@ -158,7 +159,7 @@ const Upload = () => {
           )}
 
           {/* File Rejections */}
-          {fileRejections.length > 0 && (
+          {fileRejections && fileRejections.length > 0 && (
             <div className="mt-4 p-4 bg-red-50 rounded-lg border border-red-100">
               <div className="flex items-center gap-2 text-red-800 mb-2">
                 <AlertCircle className="w-5 h-5" />
@@ -208,7 +209,7 @@ const Upload = () => {
           <div className="mt-6">
             <Button
               onClick={handleUpload}
-              disabled={acceptedFiles.length === 0 || uploadStatus.status === "uploading"}
+              disabled={!acceptedFiles || acceptedFiles.length === 0 || uploadStatus.status === "uploading"}
               className="w-full sm:w-auto"
             >
               {uploadStatus.status === "uploading" ? (
