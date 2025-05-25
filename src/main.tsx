@@ -7,19 +7,22 @@ import { queryClient } from "@api/api.ts";
 import { BrowserRouter } from "react-router";
 import { StoreProvider, StorageProvider } from "@providers";
 import ModalProvider from "./providers/ModalProvider.tsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 createRoot(document.getElementById("root")!).render(
-	<StrictMode>
-		<BrowserRouter>
-			<QueryClientProvider client={queryClient}>
-				<StoreProvider>
-					<StorageProvider>
-						<ModalProvider>
-							<App />
-						</ModalProvider>
-					</StorageProvider>
-				</StoreProvider>
-			</QueryClientProvider>
-		</BrowserRouter>
-	</StrictMode>
+  <StrictMode>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <StoreProvider>
+          <StorageProvider>
+            <ModalProvider>
+              <App />
+              <ToastContainer />
+            </ModalProvider>
+          </StorageProvider>
+        </StoreProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  </StrictMode>
 );

@@ -1,11 +1,13 @@
 import { useEffect, useState, type FC } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { TabContext } from "../contexts/TabContext";
 import { useMultiTab } from "../hooks/useMultiTab";
 import { useClient } from "../api/getClient";
 import { useStorage } from "../hooks/useStorage";
 import { STORAGE_KEYS } from "../types/storage";
 import type { Period } from "../types/period";
+import { toast } from "react-toastify";
+import { ROUTES } from "../navigation/ROUTES";
 
 interface TabProviderProps {
   children: React.ReactNode;
@@ -17,6 +19,7 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
   const { data: client, isLoading, isError } = useClient(clientId ?? "");
   const { getItem, setItem } = useStorage();
   const [period, setPeriod] = useState<Period>("month");
+  const navigate = useNavigate();
 
   const tab = getTab(clientId ?? "");
 
@@ -36,6 +39,29 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
       setPeriod(periods[clientId]);
     }
   }, [clientId, getItem]);
+
+  useEffect(() => {
+    if (client && client.status === "missing-data") {
+      toast.warning(
+        <div>
+          <p className="mb-2">Klientovi chybí některé výpisy</p>
+          <button
+            onClick={() => {
+              navigate(ROUTES.CLIENT.STATEMENTS.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`));
+              toast.dismiss();
+            }}
+            className="px-4 py-2 bg-white text-amber-800 rounded-lg text-sm font-medium hover:bg-amber-50 transition-colors"
+          >
+            Zobrazit výpisy
+          </button>
+        </div>,
+        {
+          autoClose: 10000,
+          position: "bottom-right"
+        }
+      );
+    }
+  }, [client, navigate]);
 
   const handleSetPeriod = (newPeriod: Period) => {
     setPeriod(newPeriod);
@@ -61,5 +87,3 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
     </TabContext.Provider>
   );
 };
-
-export default TabProvider;
