@@ -192,49 +192,35 @@ app.post('/api/clients', async (req, res) => {
   }
 });
 
-app.put('/api/clients/:id', async (req, res) => {
+// Account endpoints
+app.post('/api/accounts', async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, email, phone, company, notes, status } = req.body;
+    const { name, bankName, flags, clientId } = req.body;
     
-    if (!name) {
-      return res.status(400).json({ error: 'Name is required' });
+    if (!name || !bankName || !clientId) {
+      return res.status(400).json({ error: 'Name, bank name and client ID are required' });
     }
 
+    const id = `account-${Date.now()}`;
+    
     await db.asyncRun(
-      `UPDATE clients 
-       SET name = ?, email = ?, phone = ?, company = ?, notes = ?, status = ?, updated_at = CURRENT_TIMESTAMP 
-       WHERE id = ?`,
-      [name, email, phone, company, notes, status, id]
+      'INSERT INTO accounts (id, client_id, name, bank_name, flags) VALUES (?, ?, ?, ?, ?)',
+      [id, clientId, name, bankName, JSON.stringify(flags || [])]
     );
 
-    const updatedClient = await db.asyncGet('SELECT * FROM clients WHERE id = ?', [id]);
+    const account = await db.asyncGet('SELECT * FROM accounts WHERE id = ?', [id]);
     
-    if (!updatedClient) {
-      return res.status(404).json({ error: 'Client not found' });
+    if (!account) {
+      throw new Error('Failed to create account');
     }
 
-    res.json(updatedClient);
-  } catch (error) {
-    console.error('Error updating client:', error);
-    res.status(500).json({ error: 'Failed to update client' });
-  }
-});
+    // Parse JSON flags for response
+    account.flags = JSON.parse(account.flags || '[]');
 
-app.delete('/api/clients/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    const result = await db.asyncRun('DELETE FROM clients WHERE id = ?', [id]);
-    
-    if (result.changes === 0) {
-      return res.status(404).json({ error: 'Client not found' });
-    }
-
-    res.json({ message: 'Client deleted successfully' });
+    res.status(201).json(account);
   } catch (error) {
-    console.error('Error deleting client:', error);
-    res.status(500).json({ error: 'Failed to delete client' });
+    console.error('Error creating account:', error);
+    res.status(500).json({ error: 'Failed to create account' });
   }
 });
 

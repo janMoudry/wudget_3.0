@@ -4,6 +4,8 @@ import { useTab } from "../hooks/useTab";
 import { Wallet, Save, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../navigation/ROUTES";
+import { useCreateAccount } from "../api/accounts";
+import { toast } from "react-toastify";
 
 const AVAILABLE_FLAGS = [
   { value: "main", label: "Hlavní účet" },
@@ -24,19 +26,27 @@ const AVAILABLE_BANKS = [
 const AccountCreate = () => {
   const { client } = useTab();
   const navigate = useNavigate();
+  const createAccount = useCreateAccount();
 
   const [formData, setFormData] = useState({
     name: "",
     bankName: "",
     flags: [] as string[],
-    connectionType: "manual" as "manual" | "api",
   });
 
   if (!client) return null;
 
-  const handleSave = () => {
-    // Here would be the API call to create the account
-    navigate(ROUTES.CLIENT.ACCOUNTS.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`));
+  const handleSave = async () => {
+    try {
+      await createAccount.mutateAsync({
+        ...formData,
+        clientId: client.id
+      });
+      toast.success("Účet byl úspěšně vytvořen");
+      navigate(ROUTES.CLIENT.ACCOUNTS.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nepodařilo se vytvořit účet");
+    }
   };
 
   const handleCancel = () => {
@@ -67,21 +77,14 @@ const AccountCreate = () => {
             label="Název účtu"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
           />
-
-          <Select
-            label="Způsob připojení"
-            value={formData.connectionType}
-            onChange={(e) => setFormData({ ...formData, connectionType: e.target.value as "manual" | "api" })}
-          >
-            <option value="manual">Manuální nahrávání výpisů</option>
-            <option value="api">Propojení s bankou</option>
-          </Select>
 
           <Select
             label="Banka"
             value={formData.bankName}
             onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
+            required
           >
             <option value="">Vyberte banku</option>
             {AVAILABLE_BANKS.map((bank) => (
@@ -117,23 +120,22 @@ const AccountCreate = () => {
             </div>
           </div>
 
-          {formData.connectionType === "api" && (
-            <div className="rounded-lg bg-blue-50 border border-blue-100 p-4">
-              <h3 className="text-blue-800 font-medium mb-2">Propojení s bankou</h3>
-              <p className="text-blue-700 text-sm">
-                Pro propojení s bankou budete přesměrováni na stránku banky, kde se přihlásíte a potvrdíte přístup k účtu.
-              </p>
-            </div>
-          )}
-
           <div className="flex justify-end gap-3 pt-4">
-            <Button variant="secondary" onClick={handleCancel}>
+            <Button 
+              variant="secondary" 
+              onClick={handleCancel}
+              disabled={createAccount.isPending}
+            >
               <X size={16} className="mr-2" />
               Zrušit
             </Button>
-            <Button variant="primary" onClick={handleSave}>
+            <Button 
+              variant="primary" 
+              onClick={handleSave}
+              disabled={!formData.name || !formData.bankName || createAccount.isPending}
+            >
               <Save size={16} className="mr-2" />
-              Vytvořit účet
+              {createAccount.isPending ? "Ukládám..." : "Vytvořit účet"}
             </Button>
           </div>
         </div>
