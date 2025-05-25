@@ -1,4 +1,3 @@
-```typescript
 import { useState } from "react";
 import { Button, TextField, Typography, Paper, Select } from "../components";
 import { useTab } from "../hooks/useTab";
@@ -114,4 +113,3 @@ const AccountEdit = () => {
 };
 
 export default AccountEdit;
-```
