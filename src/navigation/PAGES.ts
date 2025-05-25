@@ -1,4 +1,4 @@
-```typescript
+```typescript```
 import { lazy } from "react";
 
 export const PAGES = {
@@ -15,4 +15,3 @@ export const PAGES = {
   ACCOUNTS: lazy(() => import("../pages/Accounts")),
   ACCOUNT_EDIT: lazy(() => import("../pages/AccountEdit")),
 };
-```
