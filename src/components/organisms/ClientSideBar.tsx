@@ -39,7 +39,7 @@ const ClientSidebar = () => {
           ))}
         </Select>
 
-        {client && client.accounts.length > 0 && (
+        {client && client.accounts.length > 1 && (
           <Select
             value={tab.accountId || "all"}
             onChange={(e) => setAccountId(e.target.value)}
