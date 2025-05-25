@@ -134,7 +134,7 @@ VALUES
     'Hlavní účet',
     'AirBank',
     'CZK',
-    250000,
+    0,
     '["main"]',
     '2024-12-01T10:15:00Z'
   ),
@@ -144,7 +144,7 @@ VALUES
     'Firemní účet',
     'KB',
     'CZK',
-    1250000,
+    0,
     '["business"]',
     '2024-12-01T10:15:00Z'
   ),
@@ -154,7 +154,7 @@ VALUES
     'Spořící účet',
     'ČSOB',
     'CZK',
-    350000,
+    0,
     '["savings"]',
     '2024-12-01T10:15:00Z'
   );
@@ -175,3 +175,27 @@ VALUES
   ('cp-002', 'client-001', 'Albert', 'Výdaj - Potraviny', 1, 0, '2024-12-01T10:15:00Z'),
   ('cp-003', 'client-001', 'DPP', 'Výdaj - Doprava', 1, 0, '2024-12-01T10:15:00Z'),
   ('cp-004', 'client-001', 'Nájem', 'Výdaj - Bydlení', 1, 0, '2024-12-01T10:15:00Z');
+
+  CREATE TABLE IF NOT EXISTS products (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  category TEXT,
+  description TEXT,
+  value TEXT,
+  clients_using INTEGER DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS statements (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL,
+  period TEXT NOT NULL,
+  uploaded_at TEXT DEFAULT (datetime('now')),
+  transaction_count INTEGER DEFAULT 0,
+  FOREIGN KEY (account_id) REFERENCES accounts(id)
+);
+
+

@@ -8,8 +8,20 @@ export type StatementsCheck = {
 };
 
 const checkStatements = async (clientId: string): Promise<StatementsCheck> => {
-  const res = await fetch(`/MOCK/checkStatements.json`);
-  if (!res.ok) throw new Error("Nepodařilo se zkontrolovat stav výpisů");
+  const token = localStorage.getItem("token");
+  const res = await fetch(
+    `http://localhost:3001/api/checkStatements?clientId=${clientId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Nepodařilo se zkontrolovat stav výpisů");
+  }
+
   return res.json();
 };
 

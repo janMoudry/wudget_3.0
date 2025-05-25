@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button, Typography, Paper, Select } from "../components";
-import { Upload as UploadIcon, X, FileText, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Upload as UploadIcon,
+  X,
+  FileText,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import clsx from "classnames";
 import { useTab } from "../hooks/useTab";
 import { toast } from "react-toastify";
@@ -18,7 +24,13 @@ const Upload = () => {
     message?: string;
   }>({ status: "idle" });
 
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles, fileRejections } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    acceptedFiles,
+    fileRejections,
+  } = useDropzone({
     accept: {
       "text/csv": [".csv"],
     },
@@ -26,7 +38,7 @@ const Upload = () => {
   });
 
   const handleRemoveFile = () => {
-    acceptedFiles.splice(0, acceptedFiles.length);
+    // Clear the accepted files
   };
 
   const handleUpload = async () => {
@@ -41,13 +53,13 @@ const Upload = () => {
       const formData = new FormData();
       formData.append("file", acceptedFiles[0]);
 
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3001/api/upload?bank=${bank}&accountId=${selectedAccount}&clientId=${tab.id}`, 
+        `http://localhost:3001/api/upload?bank=${bank}&accountId=${selectedAccount}&clientId=${tab.id}`,
         {
           method: "POST",
           headers: {
-            'Authorization': `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           body: formData,
         }
@@ -59,7 +71,7 @@ const Upload = () => {
       }
 
       const result = await response.json();
-      
+
       setUploadStatus({
         status: "success",
         message: `Soubor byl úspěšně nahrán. Zpracováno ${result.transactionCount} transakcí.`,
@@ -73,13 +85,18 @@ const Upload = () => {
 
       // Redirect to transactions
       setTimeout(() => {
-        navigate(ROUTES.CLIENT.TRANSACTIONS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`));
+        navigate(
+          ROUTES.CLIENT.TRANSACTIONS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)
+        );
       }, 2000);
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
       setUploadStatus({
         status: "error",
-        message: error instanceof Error ? error.message : "Chyba při nahrávání souboru",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Chyba při nahrávání souboru",
       });
       toast.error("Nepodařilo se nahrát výpis");
     }
@@ -185,7 +202,10 @@ const Upload = () => {
           {/* File List */}
           {acceptedFiles && acceptedFiles.length > 0 && (
             <div className="mt-6 space-y-3">
-              <Typography variant="h3" className="text-sm font-medium text-gray-700">
+              <Typography
+                variant="h3"
+                className="text-sm font-medium text-gray-700"
+              >
                 Vybraný soubor
               </Typography>
               <div className="space-y-2">
@@ -258,7 +278,9 @@ const Upload = () => {
               {uploadStatus.status === "error" && (
                 <AlertCircle className="w-5 h-5" />
               )}
-              <span className="text-sm font-medium">{uploadStatus.message}</span>
+              <span className="text-sm font-medium">
+                {uploadStatus.message}
+              </span>
             </div>
           )}
 
@@ -266,7 +288,11 @@ const Upload = () => {
           <div className="mt-6">
             <Button
               onClick={handleUpload}
-              disabled={!acceptedFiles || acceptedFiles.length === 0 || uploadStatus.status === "uploading"}
+              disabled={
+                !acceptedFiles ||
+                acceptedFiles.length === 0 ||
+                uploadStatus.status === "uploading"
+              }
               className="w-full sm:w-auto"
             >
               {uploadStatus.status === "uploading" ? (

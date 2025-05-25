@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Typography, Paper } from "../components";
 import { FileText, Trash2, RefreshCw, AlertTriangle } from "lucide-react";
 import { useTab } from "../hooks/useTab";
@@ -11,35 +11,34 @@ type Statement = {
   transactionCount: number;
 };
 
-const MOCK_STATEMENTS: Statement[] = [
-  {
-    id: "1",
-    bank: "airbank",
-    period: "2025-01",
-    uploadedAt: "2025-02-01T10:00:00Z",
-    transactionCount: 45,
-  },
-  {
-    id: "2",
-    bank: "kb",
-    period: "2024-12",
-    uploadedAt: "2025-01-02T14:30:00Z",
-    transactionCount: 32,
-  },
-  {
-    id: "3",
-    bank: "csob",
-    period: "2024-11",
-    uploadedAt: "2024-12-01T09:15:00Z",
-    transactionCount: 28,
-  },
-];
-
 const MISSING_PERIODS = ["2024-10", "2024-09", "2024-08"];
 
 const Statements = () => {
   const { tab } = useTab();
-  const [statements] = useState<Statement[]>(MOCK_STATEMENTS);
+  const [statements, setStatements] = useState<Statement[]>([]);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchStatements = async () => {
+      try {
+        const accountId = tab.accountId;
+        const res = await fetch(
+          `http://localhost:3001/api/statements?accountId=${accountId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const json = await res.json();
+        setStatements(json?.data || []);
+      } catch (err) {
+        console.error("Chyba při načítání výpisů:", err);
+      }
+    };
+
+    fetchStatements();
+  }, [tab.accountId, token]);
 
   const handleDelete = (id: string) => {
     console.log("Delete statement", id);
@@ -121,7 +120,9 @@ const Statements = () => {
                     <span>•</span>
                     <span>
                       Nahráno{" "}
-                      {new Date(statement.uploadedAt).toLocaleDateString("cs-CZ")}
+                      {new Date(statement.uploadedAt).toLocaleDateString(
+                        "cs-CZ"
+                      )}
                     </span>
                   </div>
                 </div>

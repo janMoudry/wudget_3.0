@@ -1,7 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useTab } from "../hooks/useTab";
 import { Typography, Paper, Button } from "../components";
-import { TrendingUp, CreditCard, Wallet, ArrowDownUp, Upload } from "lucide-react";
+import {
+  TrendingUp,
+  CreditCard,
+  Wallet,
+  ArrowDownUp,
+  Upload,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../navigation/ROUTES";
 import {
@@ -16,6 +22,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import { useEffect } from "react";
 
 type OverviewData = {
   balance: number;
@@ -43,14 +50,32 @@ type OverviewData = {
   };
 };
 
-const getOverviewData = async (clientId: string): Promise<OverviewData> => {
-  const token = localStorage.getItem('token');
-  const res = await fetch(`http://localhost:3001/api/overview/${clientId}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`
+const getOverviewData = async (
+  clientId: string,
+  {
+    account,
+    dateRange,
+  }: {
+    account?: string;
+    dateRange?: string;
+  }
+): Promise<OverviewData> => {
+  const token = localStorage.getItem("token");
+
+  const params = new URLSearchParams();
+  params.append("clientId", clientId);
+  if (account) params.append("accountId", account);
+  if (dateRange) params.append("range", dateRange);
+
+  const res = await fetch(
+    `http://localhost:3001/api/overview/?${params.toString()}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
-  });
-  
+  );
+
   if (!res.ok) throw new Error("Failed to fetch overview data");
   return res.json();
 };
@@ -58,11 +83,26 @@ const getOverviewData = async (clientId: string): Promise<OverviewData> => {
 const ClientDashboard = () => {
   const { client, tab } = useTab();
   const navigate = useNavigate();
-  const { data: overview, isLoading, isError } = useQuery({
-    queryKey: ['overview', tab.id],
-    queryFn: () => getOverviewData(tab.id),
-    enabled: !!tab.id
+  const {
+    data: overview,
+    isLoading,
+    isError,
+    refetch: refetchOverview,
+  } = useQuery({
+    queryKey: ["overview", tab.id],
+    queryFn: () =>
+      getOverviewData(tab.id, {
+        account: tab.accountId,
+        dateRange: tab.period,
+      }),
+    enabled: !!tab.id,
   });
+
+  useEffect(() => {
+    if (tab.period || tab.accountId) {
+      refetchOverview();
+    }
+  }, [tab.period, tab.accountId, refetchOverview]);
 
   if (!overview || isLoading) {
     return (
@@ -82,8 +122,12 @@ const ClientDashboard = () => {
           <Typography variant="body" className="text-gray-600 mb-8">
             Pro zobrazení přehledu je potřeba nahrát první bankovní výpis
           </Typography>
-          <Button 
-            onClick={() => navigate(ROUTES.CLIENT.UPLOAD.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`))}
+          <Button
+            onClick={() =>
+              navigate(
+                ROUTES.CLIENT.UPLOAD.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)
+              )
+            }
           >
             <Upload size={16} className="mr-2" />
             Nahrát první výpis
@@ -123,7 +167,9 @@ const ClientDashboard = () => {
               </Typography>
               <Typography
                 variant="h3"
-                className={overview.balance >= 0 ? "text-green-600" : "text-red-600"}
+                className={
+                  overview.balance >= 0 ? "text-green-600" : "text-red-600"
+                }
               >
                 {overview.balance.toLocaleString("cs-CZ", {
                   style: "currency",
@@ -144,7 +190,7 @@ const ClientDashboard = () => {
                 Příjmy
               </Typography>
               <Typography variant="h3" className="text-gray-900">
-                {overview.stats.totalIncome.toLocaleString("cs-CZ", {
+                {overview.stats?.totalIncome.toLocaleString("cs-CZ", {
                   style: "currency",
                   currency: "CZK",
                 })}
@@ -163,10 +209,13 @@ const ClientDashboard = () => {
                 Výdaje
               </Typography>
               <Typography variant="h3" className="text-gray-900">
-                {Math.abs(overview.stats.totalExpense).toLocaleString("cs-CZ", {
-                  style: "currency",
-                  currency: "CZK",
-                })}
+                {Math.abs(overview.stats?.totalExpense).toLocaleString(
+                  "cs-CZ",
+                  {
+                    style: "currency",
+                    currency: "CZK",
+                  }
+                )}
               </Typography>
             </div>
           </div>
@@ -182,7 +231,7 @@ const ClientDashboard = () => {
                 Počet transakcí
               </Typography>
               <Typography variant="h3" className="text-gray-900">
-                {overview.stats.totalTransactions}
+                {overview.stats?.totalTransactions}
               </Typography>
             </div>
           </div>
@@ -192,10 +241,12 @@ const ClientDashboard = () => {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Paper className="p-6">
-          <Typography variant="h3" className="mb-6">Vývoj v čase</Typography>
+          <Typography variant="h3" className="mb-6">
+            Vývoj v čase
+          </Typography>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={overview.chartData.byDay}>
+              <LineChart data={overview.chartData?.byDay}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis dataKey="date" stroke="#6B7280" />
                 <YAxis stroke="#6B7280" />
@@ -227,11 +278,13 @@ const ClientDashboard = () => {
         </Paper>
 
         <Paper className="p-6">
-          <Typography variant="h3" className="mb-6">Kategorie výdajů</Typography>
+          <Typography variant="h3" className="mb-6">
+            Kategorie výdajů
+          </Typography>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
-                data={overview.chartData.byCategory}
+                data={overview.chartData?.byCategory}
                 layout="vertical"
                 margin={{ top: 0, right: 0, left: 40, bottom: 0 }}
               >
@@ -256,11 +309,7 @@ const ClientDashboard = () => {
                     })
                   }
                 />
-                <Bar
-                  dataKey="total"
-                  fill="#6366F1"
-                  radius={[0, 4, 4, 0]}
-                />
+                <Bar dataKey="total" fill="#6366F1" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -269,14 +318,16 @@ const ClientDashboard = () => {
 
       {/* Additional Info */}
       <Paper className="p-6">
-        <Typography variant="h3" className="mb-4">Další informace</Typography>
+        <Typography variant="h3" className="mb-4">
+          Další informace
+        </Typography>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
             <Typography variant="small" className="text-gray-500">
               Nejčastější kategorie
             </Typography>
             <Typography variant="body" className="font-medium">
-              {overview.labels.mostUsedCategory}
+              {overview.labels?.mostUsedCategory}
             </Typography>
           </div>
           <div className="space-y-2">
@@ -284,7 +335,7 @@ const ClientDashboard = () => {
               Největší příjem
             </Typography>
             <Typography variant="body" className="font-medium text-green-600">
-              {overview.labels.highestIncome}
+              {overview.labels?.highestIncome}
             </Typography>
           </div>
           <div className="space-y-2">
@@ -292,7 +343,7 @@ const ClientDashboard = () => {
               Největší výdaj
             </Typography>
             <Typography variant="body" className="font-medium text-red-600">
-              {overview.labels.highestExpense}
+              {overview.labels?.highestExpense}
             </Typography>
           </div>
         </div>

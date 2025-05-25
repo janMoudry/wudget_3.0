@@ -28,12 +28,14 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (client && !tab) {
-      const mainAccount = client.accounts.find(acc => acc.flags.includes("main"));
+      const mainAccount = client.accounts.find((acc) =>
+        acc.flags.includes("main")
+      );
       addTab({
         id: client.id,
         title: client.name,
         period: "month",
-        accountId: mainAccount?.id
+        accountId: mainAccount?.id,
       });
       if (mainAccount) {
         setAccountId(mainAccount.id);
@@ -57,10 +59,18 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
     if (statementsCheck?.status === "incomplete" && client) {
       toast.warning(
         <div>
-          <p className="mb-2">Klientovi chybí výpisy za {statementsCheck.missingPeriods.length} období</p>
+          <p className="mb-2">
+            Klientovi chybí výpisy za {statementsCheck.missingPeriods.length}{" "}
+            období
+          </p>
           <button
             onClick={() => {
-              navigate(ROUTES.CLIENT.STATEMENTS.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`));
+              navigate(
+                ROUTES.CLIENT.STATEMENTS.replace(
+                  ROUTES.CLIENT_ROOT,
+                  `/${client.id}/`
+                )
+              );
               toast.dismiss();
             }}
             className="px-4 py-2 bg-white text-amber-800 rounded-lg text-sm font-medium hover:bg-amber-50 transition-colors"
@@ -70,7 +80,7 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
         </div>,
         {
           autoClose: 10000,
-          position: "bottom-right"
+          position: "bottom-right",
         }
       );
     }
@@ -96,13 +106,13 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
 
   return (
     <TabContext.Provider
-      value={{ 
-        tab: { ...tab, period, accountId }, 
-        client: client || null, 
-        isLoading, 
+      value={{
+        tab: { ...tab, period, accountId },
+        client: client || null,
+        isLoading,
         isError,
         setPeriod: handleSetPeriod,
-        setAccountId: handleSetAccountId
+        setAccountId: handleSetAccountId,
       }}
     >
       {children}

@@ -14,6 +14,13 @@ const AVAILABLE_FLAGS = [
   { value: "foreign", label: "Zahraniční" },
 ];
 
+const AVAILABLE_BANKS = [
+  { value: "airbank", label: "Air Bank" },
+  { value: "kb", label: "Komerční banka" },
+  { value: "csob", label: "ČSOB" },
+  { value: "fio", label: "Fio banka" },
+];
+
 const AccountEdit = () => {
   const { client } = useTab();
   const { accountId } = useParams<{ accountId: string }>();
@@ -31,11 +38,15 @@ const AccountEdit = () => {
 
   const handleSave = () => {
     // Here would be the API call to update the account
-    navigate(ROUTES.CLIENT.ACCOUNTS.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`));
+    navigate(
+      ROUTES.CLIENT.ACCOUNTS.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`)
+    );
   };
 
   const handleCancel = () => {
-    navigate(ROUTES.CLIENT.ACCOUNTS.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`));
+    navigate(
+      ROUTES.CLIENT.ACCOUNTS.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`)
+    );
   };
 
   return (
@@ -64,11 +75,21 @@ const AccountEdit = () => {
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
 
-          <TextField
-            label="Název banky"
+          <Select
+            label="Banka"
             value={formData.bankName}
-            onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
-          />
+            onChange={(e) =>
+              setFormData({ ...formData, bankName: e.target.value })
+            }
+            required
+          >
+            <option value="">Vyberte banku</option>
+            {AVAILABLE_BANKS.map((bank) => (
+              <option key={bank.value} value={bank.value}>
+                {bank.label}
+              </option>
+            ))}
+          </Select>
 
           <div>
             <label className="text-sm font-medium text-gray-700 mb-2 block">

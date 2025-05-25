@@ -1,8 +1,9 @@
 // src/pages/Transactions.tsx
 import { useEffect, useState } from "react";
 import { Button, Typography, Paper, TextField } from "../components";
-import { ArrowDownUp, Download, Filter, Search, TrendingUp } from "lucide-react";
+import { Download, Search, TrendingUp } from "lucide-react";
 import clsx from "classnames";
+import { useTab } from "@hooks";
 
 type Transaction = {
   date: string;
@@ -17,15 +18,40 @@ type Transaction = {
 };
 
 const Transactions = () => {
+  const { tab } = useTab();
   const [search, setSearch] = useState("");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const res = await fetch("http://localhost:3001/transactions");
+        const clientId = "client-001"; // nebo z contextu
+        const period = tab.period || "all";
+        const accountIds = tab.accountId === "all" ? "all" : tab.accountId;
+
+        if (!clientId || !period || !accountIds) {
+          console.error("Není zadán clientId, period nebo accountIds");
+          return;
+        }
+
+        const params = new URLSearchParams({
+          clientId,
+          range: period,
+          accountIds,
+        });
+
+        const res = await fetch(
+          `http://localhost:3001/api/transactions?${params}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const json = await res.json();
         setTransactions(json?.data || []);
       } catch (err) {
@@ -34,13 +60,14 @@ const Transactions = () => {
     };
 
     fetchTransactions();
-  }, []);
+  }, [tab.accountId, tab.period, token]);
 
   const filtered = transactions.filter((t) => {
     const matchesSearch = `${t.counterparty} ${t.category} ${t.note}`
       .toLowerCase()
       .includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === "all" || t.category === categoryFilter;
+    const matchesCategory =
+      categoryFilter === "all" || t.category === categoryFilter;
     const matchesType = typeFilter === "all" || t.type === typeFilter;
     return matchesSearch && matchesCategory && matchesType;
   });
