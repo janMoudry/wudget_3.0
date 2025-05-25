@@ -179,14 +179,30 @@ app.post('/api/clients', async (req, res) => {
 
     const id = `client-${Date.now()}`;
     
+    // Start transaction
+    await db.asyncRun('BEGIN TRANSACTION');
+
+    // Create client
     await db.asyncRun(
       'INSERT INTO clients (id, name, email, phone, company, notes) VALUES (?, ?, ?, ?, ?, ?)',
       [id, name, email, phone, company, notes]
     );
 
+    // Create default account
+    const accountId = `account-${Date.now()}`;
+    await db.asyncRun(
+      'INSERT INTO accounts (id, client_id, name, bank_name, flags) VALUES (?, ?, ?, ?, ?)',
+      [accountId, id, 'Hlavní účet', 'AirBank', JSON.stringify(['main'])]
+    );
+
+    // Commit transaction
+    await db.asyncRun('COMMIT');
+
     const client = await db.asyncGet('SELECT * FROM clients WHERE id = ?', [id]);
     res.status(201).json(client);
   } catch (error) {
+    // Rollback on error
+    await db.asyncRun('ROLLBACK');
     console.error('Error creating client:', error);
     res.status(500).json({ error: 'Failed to create client' });
   }
@@ -226,9 +242,9 @@ app.post('/api/accounts', async (req, res) => {
 
 // Upload endpoint
 app.post('/api/upload', upload.single('file'), async (req, res) => {
-  const { bank, accountId, clientId } = req.query;
+  const { accountId, clientId } = req.query;
   
-  if (!req.file || !bank || !accountId || !clientId) {
+  if (!req.file || !accountId || !clientId) {
     return res.status(400).json({
       error: 'Missing required parameters.',
     });
@@ -238,6 +254,12 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
   const transactions = [];
 
   try {
+    // Get account to determine bank
+    const account = await db.asyncGet('SELECT * FROM accounts WHERE id = ?', [accountId]);
+    if (!account) {
+      throw new Error('Account not found');
+    }
+
     // Generate statement ID
     const statementId = `statement-${Date.now()}`;
     
@@ -251,13 +273,12 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
       let normalizedTransaction;
       
       // Normalize based on bank type
-      switch (bank) {
+      switch (account.bank_name.toLowerCase()) {
         case 'airbank':
           normalizedTransaction = normalizeAirbank(row);
           break;
-        // Add other banks here
         default:
-          throw new Error(`Unsupported bank: ${bank}`);
+          throw new Error(`Unsupported bank: ${account.bank_name}`);
       }
 
       if (normalizedTransaction) {
