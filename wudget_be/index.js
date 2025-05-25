@@ -87,6 +87,98 @@ app.post('/api/login', async (req, res) => {
 // Protected routes
 app.use('/api', authenticate);
 
+// Dashboard overview endpoint
+app.get('/api/dashboard', async (req, res) => {
+  try {
+    // Get total number of clients
+    const clientsCount = await db.asyncGet('SELECT COUNT(*) as count FROM clients');
+
+    // Get total number of transactions
+    const transactionsCount = await db.asyncGet('SELECT COUNT(*) as count FROM transactions');
+
+    // Get total balance across all accounts
+    const totalBalance = await db.asyncGet('SELECT SUM(balance) as total FROM accounts');
+
+    // Get last uploads
+    const lastUploads = await db.asyncAll(`
+      SELECT 
+        c.name as clientName,
+        a.bank_name as bank,
+        s.uploaded_at as date
+      FROM statements s
+      JOIN accounts a ON s.account_id = a.id
+      JOIN clients c ON a.client_id = c.id
+      ORDER BY s.uploaded_at DESC
+      LIMIT 3
+    `);
+
+    // Get highest income and expense
+    const maxIncome = await db.asyncGet(`
+      SELECT counterparty, amount
+      FROM transactions
+      WHERE type = 'income'
+      ORDER BY amount DESC
+      LIMIT 1
+    `);
+
+    const maxExpense = await db.asyncGet(`
+      SELECT counterparty, amount
+      FROM transactions
+      WHERE type = 'expense'
+      ORDER BY amount ASC
+      LIMIT 1
+    `);
+
+    // Get clients list
+    const clientsList = await db.asyncAll(`
+      SELECT id, name
+      FROM clients
+      LIMIT 4
+    `);
+
+    // Get outdated clients (no statement in last 3 months)
+    const outdatedClients = await db.asyncAll(`
+      SELECT 
+        c.id,
+        c.name,
+        MAX(s.uploaded_at) as lastUpdated
+      FROM clients c
+      LEFT JOIN accounts a ON c.id = a.client_id
+      LEFT JOIN statements s ON a.id = s.account_id
+      GROUP BY c.id, c.name
+      HAVING 
+        lastUpdated < date('now', '-3 months')
+        OR lastUpdated IS NULL
+    `);
+
+    res.json({
+      clients: clientsCount.count,
+      transactions: transactionsCount.count,
+      balance: totalBalance.total || 0,
+      lastUploads: lastUploads.map(upload => ({
+        ...upload,
+        date: new Date(upload.date).toISOString().split('T')[0]
+      })),
+      maxIncome: maxIncome ? {
+        counterparty: maxIncome.counterparty,
+        amount: maxIncome.amount
+      } : null,
+      maxExpense: maxExpense ? {
+        counterparty: maxExpense.counterparty,
+        amount: Math.abs(maxExpense.amount)
+      } : null,
+      clientsList,
+      outdatedClients: outdatedClients.map(client => ({
+        ...client,
+        lastUpdated: client.lastUpdated ? new Date(client.lastUpdated).toISOString().split('T')[0] : null
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    res.status(500).json({ error: 'Failed to fetch dashboard data' });
+  }
+});
+
 // Overview endpoint
 app.get('/api/overview', async (req, res) => {
   try {

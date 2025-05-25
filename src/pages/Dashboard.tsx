@@ -1,35 +1,71 @@
+import { useQuery } from "@tanstack/react-query";
 import { Typography, Paper, Button } from "../components";
 import { User, TrendingUp, CreditCard, Wallet } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../navigation/ROUTES";
+
+type DashboardData = {
+  clients: number;
+  transactions: number;
+  balance: number;
+  lastUploads: {
+    clientName: string;
+    bank: string;
+    date: string;
+  }[];
+  maxIncome: {
+    counterparty: string;
+    amount: number;
+  } | null;
+  maxExpense: {
+    counterparty: string;
+    amount: number;
+  } | null;
+  clientsList: {
+    id: number;
+    name: string;
+  }[];
+  outdatedClients: {
+    id: number;
+    name: string;
+    lastUpdated: string | null;
+  }[];
+};
+
+const getDashboardData = async (): Promise<DashboardData> => {
+  const token = localStorage.getItem('token');
+  const res = await fetch("http://localhost:3001/api/dashboard", {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  if (!res.ok) throw new Error("Failed to fetch dashboard data");
+  return res.json();
+};
 
 const Dashboard = () => {
-  const mock = {
-    clients: 4,
-    transactions: 1290,
-    balance: 143256,
-    lastUploads: [
-      { clientName: "ACME s.r.o.", bank: "AirBank", date: "2025-05-24" },
-      { clientName: "Techify", bank: "Moneta", date: "2025-05-22" },
-      { clientName: "DeltaWare", bank: "ČSOB", date: "2025-05-20" },
-    ],
-    maxIncome: {
-      counterparty: "Rohlík s.r.o.",
-      amount: 85000,
-    },
-    maxExpense: {
-      counterparty: "Datart",
-      amount: 42000,
-    },
-    clientsList: [
-      { name: "ACME s.r.o.", id: 1 },
-      { name: "Techify", id: 2 },
-      { name: "DeltaWare", id: 3 },
-      { name: "InovaTech", id: 4 },
-    ],
-    outdatedClients: [
-      { id: 1, name: "ACME s.r.o.", lastUpdated: "2024-11-12" },
-      { id: 4, name: "InovaTech", lastUpdated: null },
-    ],
-  };
+  const navigate = useNavigate();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['dashboard'],
+    queryFn: getDashboardData
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-3.5rem)] text-gray-500">
+        Načítám data...
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-3.5rem)] text-error-500">
+        Chyba při načítání dat.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -54,7 +90,7 @@ const Dashboard = () => {
                 Počet klientů
               </Typography>
               <Typography variant="h2" className="text-gray-900">
-                {mock.clients}
+                {data.clients}
               </Typography>
             </div>
           </div>
@@ -70,7 +106,7 @@ const Dashboard = () => {
                 Celkem transakcí
               </Typography>
               <Typography variant="h2" className="text-gray-900">
-                {mock.transactions}
+                {data.transactions}
               </Typography>
             </div>
           </div>
@@ -86,7 +122,7 @@ const Dashboard = () => {
                 Celková bilance
               </Typography>
               <Typography variant="h2" className="text-gray-900">
-                {mock.balance.toLocaleString("cs-CZ", {
+                {data.balance.toLocaleString("cs-CZ", {
                   style: "currency",
                   currency: "CZK",
                 })}
@@ -105,7 +141,7 @@ const Dashboard = () => {
                 Průměrná transakce
               </Typography>
               <Typography variant="h2" className="text-gray-900">
-                {(mock.balance / mock.transactions).toLocaleString("cs-CZ", {
+                {(data.balance / data.transactions).toLocaleString("cs-CZ", {
                   style: "currency",
                   currency: "CZK",
                   maximumFractionDigits: 0,
@@ -123,16 +159,18 @@ const Dashboard = () => {
             Poslední výpisy
           </Typography>
           <div className="space-y-4">
-            {mock.lastUploads.map((u, i) => (
+            {data.lastUploads.map((upload, i) => (
               <div
                 key={i}
                 className="flex justify-between items-center p-3 rounded-lg bg-gray-50"
               >
                 <div>
-                  <p className="text-gray-900 font-medium">{u.clientName}</p>
-                  <p className="text-sm text-gray-500">{u.bank}</p>
+                  <p className="text-gray-900 font-medium">{upload.clientName}</p>
+                  <p className="text-sm text-gray-500">{upload.bank}</p>
                 </div>
-                <span className="text-sm text-gray-500">{u.date}</span>
+                <span className="text-sm text-gray-500">
+                  {new Date(upload.date).toLocaleDateString("cs-CZ")}
+                </span>
               </div>
             ))}
           </div>
@@ -144,31 +182,35 @@ const Dashboard = () => {
             Největší transakce
           </Typography>
           <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-green-50 border border-green-100">
-              <p className="text-green-700 font-medium mb-1">Největší příjem</p>
-              <p className="text-green-900 text-lg font-semibold">
-                {mock.maxIncome.amount.toLocaleString("cs-CZ", {
-                  style: "currency",
-                  currency: "CZK",
-                })}
-              </p>
-              <p className="text-sm text-green-600 mt-1">
-                {mock.maxIncome.counterparty}
-              </p>
-            </div>
+            {data.maxIncome && (
+              <div className="p-4 rounded-lg bg-green-50 border border-green-100">
+                <p className="text-green-700 font-medium mb-1">Největší příjem</p>
+                <p className="text-green-900 text-lg font-semibold">
+                  {data.maxIncome.amount.toLocaleString("cs-CZ", {
+                    style: "currency",
+                    currency: "CZK",
+                  })}
+                </p>
+                <p className="text-sm text-green-600 mt-1">
+                  {data.maxIncome.counterparty}
+                </p>
+              </div>
+            )}
 
-            <div className="p-4 rounded-lg bg-red-50 border border-red-100">
-              <p className="text-red-700 font-medium mb-1">Největší výdaj</p>
-              <p className="text-red-900 text-lg font-semibold">
-                {mock.maxExpense.amount.toLocaleString("cs-CZ", {
-                  style: "currency",
-                  currency: "CZK",
-                })}
-              </p>
-              <p className="text-sm text-red-600 mt-1">
-                {mock.maxExpense.counterparty}
-              </p>
-            </div>
+            {data.maxExpense && (
+              <div className="p-4 rounded-lg bg-red-50 border border-red-100">
+                <p className="text-red-700 font-medium mb-1">Největší výdaj</p>
+                <p className="text-red-900 text-lg font-semibold">
+                  {data.maxExpense.amount.toLocaleString("cs-CZ", {
+                    style: "currency",
+                    currency: "CZK",
+                  })}
+                </p>
+                <p className="text-sm text-red-600 mt-1">
+                  {data.maxExpense.counterparty}
+                </p>
+              </div>
+            )}
           </div>
         </Paper>
       </div>
@@ -178,15 +220,15 @@ const Dashboard = () => {
         <Typography variant="h3" className="text-gray-900 mb-4">
           Klienti bez aktuálního výpisu
         </Typography>
-        {mock.outdatedClients.length === 0 ? (
+        {data.outdatedClients.length === 0 ? (
           <p className="text-gray-500">
             Všichni klienti jsou aktuální ✅
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {mock.outdatedClients.map((c) => (
+            {data.outdatedClients.map((client) => (
               <div
-                key={c.id}
+                key={client.id}
                 className="p-4 rounded-lg bg-gray-50 border border-gray-200"
               >
                 <div className="flex items-center justify-between">
@@ -195,13 +237,17 @@ const Dashboard = () => {
                       <User className="w-5 h-5 text-gray-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{c.name}</p>
+                      <p className="font-medium text-gray-900">{client.name}</p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Naposledy: {c.lastUpdated || "nikdy"}
+                        Naposledy: {client.lastUpdated ? new Date(client.lastUpdated).toLocaleDateString("cs-CZ") : "nikdy"}
                       </p>
                     </div>
                   </div>
-                  <Button variant="secondary" size="sm">
+                  <Button 
+                    variant="secondary" 
+                    size="sm"
+                    onClick={() => navigate(ROUTES.CLIENT.DASHBOARD.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`))}
+                  >
                     Detail
                   </Button>
                 </div>
