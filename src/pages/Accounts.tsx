@@ -1,4 +1,3 @@
-```typescript
 import { useState } from "react";
 import { Button, Typography, Paper } from "../components";
 import { useTab } from "../hooks/useTab";
@@ -145,4 +144,3 @@ const Accounts = () => {
 };
 
 export default Accounts;
-```
