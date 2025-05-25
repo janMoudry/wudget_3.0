@@ -4,6 +4,18 @@ import { Typography, Paper, Button } from "../components";
 import { TrendingUp, CreditCard, Wallet, ArrowDownUp, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../navigation/ROUTES";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+  LineChart,
+  Line,
+} from "recharts";
 
 type OverviewData = {
   balance: number;
