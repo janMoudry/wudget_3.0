@@ -12,6 +12,7 @@ export const ROUTES = {
   PRODUCTS: "/products",
   PRODUCT_CREATE: "/products/create",
   PRODUCT_EDIT: "/products/:productId/edit",
+  PLANS: "/plans",
 
   // Client
   CLIENT_ROOT: "/:clientId/",
@@ -26,6 +27,7 @@ export const ROUTES = {
     ACCOUNT_CREATE: "/:clientId/accounts/create",
     PRODUCTS: "/:clientId/products",
     COUNTERPARTIES: "/:clientId/counterparties",
-    SUBSCRIPTIONS: "/:clientId/subscriptions"
+    SUBSCRIPTIONS: "/:clientId/subscriptions",
+    PLANS: "/:clientId/plans"
   },
 };

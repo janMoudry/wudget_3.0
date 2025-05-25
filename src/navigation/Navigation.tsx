@@ -20,6 +20,7 @@ const Navigation = () => (
       <Route path={ROUTES.PRODUCTS} element={<PAGES.PRODUCTS />} />
       <Route path={ROUTES.PRODUCT_CREATE} element={<PAGES.PRODUCT_CREATE />} />
       <Route path={ROUTES.PRODUCT_EDIT} element={<PAGES.PRODUCT_EDIT />} />
+      <Route path={ROUTES.PLANS} element={<PAGES.PLANS />} />
     </Route>
     {/* Client */}
     <Route path={ROUTES.CLIENT_ROOT} element={<ClientLayout />}>
@@ -34,6 +35,7 @@ const Navigation = () => (
       <Route path={ROUTES.CLIENT.PRODUCTS} element={<PAGES.CLIENT_PRODUCTS />} />
       <Route path={ROUTES.CLIENT.COUNTERPARTIES} element={<PAGES.COUNTERPARTIES />} />
       <Route path={ROUTES.CLIENT.SUBSCRIPTIONS} element={<PAGES.SUBSCRIPTIONS />} />
+      <Route path={ROUTES.CLIENT.PLANS} element={<PAGES.CLIENT_PLANS />} />
     </Route>
   </Routes>
 );
