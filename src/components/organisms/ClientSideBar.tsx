@@ -3,27 +3,11 @@ import { ROUTES } from "../../navigation/ROUTES";
 import { useTab } from "../../hooks/useTab";
 import { Select, Divider } from "../atoms";
 import { PERIOD_LABELS } from "../../types/period";
+import { Accordion } from "../molecules";
+import { LayoutDashboard, FileText, Upload, Settings, Wallet } from "lucide-react";
 
 const ClientSidebar = () => {
   const { tab, client, setPeriod, setAccountId } = useTab();
-
-  const getAccountLabel = (account: typeof client.accounts[0]) => {
-    return (
-      <div className="flex items-center gap-2">
-        <span>{account.name}</span>
-        <div className="flex gap-1 ml-2">
-          {account.flags.map((flag) => (
-            <span
-              key={flag}
-              className="px-1.5 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700"
-            >
-              {flag}
-            </span>
-          ))}
-        </div>
-      </div>
-    );
-  };
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 p-4 h-full">
@@ -52,105 +36,98 @@ const ClientSidebar = () => {
             ))}
           </Select>
         )}
-
-        {client && tab.accountId && tab.accountId !== "all" && (
-          <div className="text-sm text-gray-600">
-            {client.accounts.find((acc) => acc.id === tab.accountId)?.flags.map((flag) => (
-              <span
-                key={flag}
-                className="inline-block px-2 py-1 mr-1 mb-1 rounded-full bg-gray-100 text-gray-700"
-              >
-                {flag}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
 
-      <nav className="flex flex-col gap-2 text-sm">
-        <NavLink
-          to={ROUTES.CLIENT.DASHBOARD.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
-          className={({ isActive }) =>
-            `px-3 py-2 rounded-lg transition-colors duration-200 ${
-              isActive 
-                ? "bg-gray-100 text-gray-900 font-medium" 
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`
-          }
-        >
-          Dashboard
-        </NavLink>
-        <NavLink
-          to={ROUTES.CLIENT.TRANSACTIONS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
-          className={({ isActive }) =>
-            `px-3 py-2 rounded-lg transition-colors duration-200 ${
-              isActive 
-                ? "bg-gray-100 text-gray-900 font-medium" 
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`
-          }
-        >
-          Transakce
-        </NavLink>
+      <nav className="flex flex-col gap-4">
+        {/* Overview */}
+        <Accordion title="Přehled">
+          <NavLink
+            to={ROUTES.CLIENT.DASHBOARD.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                isActive 
+                  ? "bg-gray-100 text-gray-900 font-medium" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`
+            }
+          >
+            <LayoutDashboard size={18} />
+            Dashboard
+          </NavLink>
+          <NavLink
+            to={ROUTES.CLIENT.TRANSACTIONS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                isActive 
+                  ? "bg-gray-100 text-gray-900 font-medium" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`
+            }
+          >
+            <FileText size={18} />
+            Transakce
+          </NavLink>
+        </Accordion>
 
-        <div className="my-2">
-          <Divider />
-        </div>
+        {/* Bank Statements */}
+        <Accordion title="Bankovní výpisy">
+          <NavLink
+            to={ROUTES.CLIENT.STATEMENTS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                isActive 
+                  ? "bg-gray-100 text-gray-900 font-medium" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`
+            }
+          >
+            <FileText size={18} />
+            Výpisy
+          </NavLink>
+          <NavLink
+            to={ROUTES.CLIENT.UPLOAD.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                isActive 
+                  ? "bg-gray-100 text-gray-900 font-medium" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`
+            }
+          >
+            <Upload size={18} />
+            Nahrát Výpis
+          </NavLink>
+        </Accordion>
 
-        <NavLink
-          to={ROUTES.CLIENT.STATEMENTS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
-          className={({ isActive }) =>
-            `px-3 py-2 rounded-lg transition-colors duration-200 ${
-              isActive 
-                ? "bg-gray-100 text-gray-900 font-medium" 
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`
-          }
-        >
-          Výpisy
-        </NavLink>
-        <NavLink
-          to={ROUTES.CLIENT.UPLOAD.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
-          className={({ isActive }) =>
-            `px-3 py-2 rounded-lg transition-colors duration-200 ${
-              isActive 
-                ? "bg-gray-100 text-gray-900 font-medium" 
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`
-          }
-        >
-          Nahrát Výpis
-        </NavLink>
-
-        <div className="my-2">
-          <Divider />
-        </div>
-
-        <NavLink
-          to={ROUTES.CLIENT.ACCOUNTS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
-          className={({ isActive }) =>
-            `px-3 py-2 rounded-lg transition-colors duration-200 ${
-              isActive 
-                ? "bg-gray-100 text-gray-900 font-medium" 
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`
-          }
-        >
-          Správa účtů
-        </NavLink>
-
-        <NavLink
-          to={ROUTES.CLIENT.SETTINGS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
-          className={({ isActive }) =>
-            `px-3 py-2 rounded-lg transition-colors duration-200 ${
-              isActive 
-                ? "bg-gray-100 text-gray-900 font-medium" 
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`
-          }
-        >
-          Nastavení
-        </NavLink>
+        {/* Settings */}
+        <Accordion title="Nastavení">
+          <NavLink
+            to={ROUTES.CLIENT.ACCOUNTS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                isActive 
+                  ? "bg-gray-100 text-gray-900 font-medium" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`
+            }
+          >
+            <Wallet size={18} />
+            Správa účtů
+          </NavLink>
+          <NavLink
+            to={ROUTES.CLIENT.SETTINGS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                isActive 
+                  ? "bg-gray-100 text-gray-900 font-medium" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`
+            }
+          >
+            <Settings size={18} />
+            Nastavení
+          </NavLink>
+        </Accordion>
       </nav>
     </aside>
   );
