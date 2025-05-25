@@ -41,7 +41,7 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
   }, [clientId, getItem]);
 
   useEffect(() => {
-    if (client && client.status === "missing-data") {
+    if (client) {
       toast.warning(
         <div>
           <p className="mb-2">Klientovi chybí některé výpisy</p>
