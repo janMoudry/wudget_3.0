@@ -28,6 +28,7 @@ const Navigation = () => (
 			<Route path={ROUTES.CLIENT.UPLOAD} element={<PAGES.UPLOAD />} />
 			<Route path={ROUTES.CLIENT.STATEMENTS} element={<PAGES.STATEMENTS />} />
 			<Route path={ROUTES.CLIENT.SETTINGS} element={<PAGES.CLIENT_SETTINGS />} />
+			<Route path={ROUTES.CLIENT.ACCOUNTS} element={<PAGES.ACCOUNTS />} />
 		</Route>
 	</Routes>
 );

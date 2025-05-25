@@ -11,4 +11,5 @@ export const PAGES = {
 	STATEMENTS: lazy(() => import("../pages/Statements")),
 	SETTINGS: lazy(() => import("../pages/Settings")),
 	CLIENT_SETTINGS: lazy(() => import("../pages/ClientSettings")),
+	ACCOUNTS: lazy(() => import("../pages/Accounts")),
 };

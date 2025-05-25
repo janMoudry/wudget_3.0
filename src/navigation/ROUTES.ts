@@ -15,5 +15,6 @@ export const ROUTES = {
 		UPLOAD: "/:clientId/upload",
 		STATEMENTS: "/:clientId/statements",
 		SETTINGS: "/:clientId/settings",
+		ACCOUNTS: "/:clientId/accounts",
 	},
 };
