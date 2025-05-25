@@ -7,6 +7,7 @@ import {
   FileText,
   AlertCircle,
   CheckCircle2,
+  Wallet,
 } from "lucide-react";
 import clsx from "classnames";
 import { useTab } from "../hooks/useTab";
@@ -17,7 +18,6 @@ import { ROUTES } from "../navigation/ROUTES";
 const Upload = () => {
   const { client, tab } = useTab();
   const navigate = useNavigate();
-  const [bank, setBank] = useState<string | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<string>("");
   const [uploadStatus, setUploadStatus] = useState<{
     status: "idle" | "uploading" | "success" | "error";
@@ -37,13 +37,21 @@ const Upload = () => {
     multiple: false,
   });
 
+  // Redirect to account creation if no accounts exist
+  if (client && client.accounts.length === 0) {
+    navigate(ROUTES.CLIENT.ACCOUNT_CREATE.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`));
+    return null;
+  }
+
+  const selectedAccountDetails = client?.accounts.find(acc => acc.id === selectedAccount);
+
   const handleRemoveFile = () => {
     // Clear the accepted files
   };
 
   const handleUpload = async () => {
-    if (!bank || !acceptedFiles.length || !selectedAccount) {
-      toast.error("Vyberte banku, účet a soubor pro nahrání");
+    if (!selectedAccount || !acceptedFiles.length) {
+      toast.error("Vyberte účet a soubor pro nahrání");
       return;
     }
 
@@ -55,7 +63,7 @@ const Upload = () => {
 
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3001/api/upload?bank=${bank}&accountId=${selectedAccount}&clientId=${tab.id}`,
+        `http://localhost:3001/api/upload?accountId=${selectedAccount}&clientId=${tab.id}&bank=${selectedAccountDetails?.bankName.toLowerCase()}`,
         {
           method: "POST",
           headers: {
@@ -139,32 +147,27 @@ const Upload = () => {
         </Paper>
       )}
 
-      {/* Bank Selection */}
-      <Paper className="p-6">
-        <Typography variant="h3" className="mb-4">
-          Vyberte banku
-        </Typography>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {["airbank", "kb", "csob", "fio"].map((bankName) => (
-            <button
-              key={bankName}
-              onClick={() => setBank(bankName)}
-              className={clsx(
-                "p-4 rounded-lg border-2 transition-all duration-200",
-                "flex items-center justify-center",
-                bank === bankName
-                  ? "border-primary-500 bg-primary-50"
-                  : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
-              )}
-            >
-              <span className="capitalize">{bankName}</span>
-            </button>
-          ))}
-        </div>
-      </Paper>
+      {/* Selected Bank Info */}
+      {selectedAccountDetails && (
+        <Paper className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gray-100 rounded-lg">
+              <Wallet className="w-6 h-6 text-gray-900" />
+            </div>
+            <div>
+              <Typography variant="h3" className="mb-1">
+                {selectedAccountDetails.bankName}
+              </Typography>
+              <Typography variant="small" className="text-gray-500">
+                Nahrávání výpisu pro {selectedAccountDetails.name}
+              </Typography>
+            </div>
+          </div>
+        </Paper>
+      )}
 
       {/* Upload Area */}
-      {bank && selectedAccount && (
+      {selectedAccount && (
         <Paper className="p-6">
           <Typography variant="h3" className="mb-4">
             Nahrát soubor
