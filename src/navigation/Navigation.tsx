@@ -13,6 +13,7 @@ const Navigation = () => (
 			<Route path={ROUTES.DASHBOARD} element={<PAGES.DASHBOARD />} />
 			<Route path={ROUTES.CLIENTS} element={<PAGES.CLIENTS />} />
 			<Route path={ROUTES.PROFILE} element={<PAGES.PROFILE />} />
+			<Route path={ROUTES.SETTINGS} element={<PAGES.SETTINGS />} />
 		</Route>
 		{/* Client */}
 		<Route path={ROUTES.CLIENT_ROOT} element={<ClientLayout />}>
@@ -26,6 +27,7 @@ const Navigation = () => (
 			/>
 			<Route path={ROUTES.CLIENT.UPLOAD} element={<PAGES.UPLOAD />} />
 			<Route path={ROUTES.CLIENT.STATEMENTS} element={<PAGES.STATEMENTS />} />
+			<Route path={ROUTES.CLIENT.SETTINGS} element={<PAGES.CLIENT_SETTINGS />} />
 		</Route>
 	</Routes>
 );

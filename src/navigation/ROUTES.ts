@@ -5,6 +5,7 @@ export const ROUTES = {
 	DASHBOARD: "/",
 	CLIENTS: "/clients",
 	PROFILE: "/profile",
+	SETTINGS: "/settings",
 
 	// Client
 	CLIENT_ROOT: "/:clientId/",
@@ -13,5 +14,6 @@ export const ROUTES = {
 		TRANSACTIONS: "/:clientId/transactions",
 		UPLOAD: "/:clientId/upload",
 		STATEMENTS: "/:clientId/statements",
+		SETTINGS: "/:clientId/settings",
 	},
 };

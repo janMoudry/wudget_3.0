@@ -76,6 +76,23 @@ const ClientSidebar = () => {
         >
           Nahrát Výpis
         </NavLink>
+
+        <div className="my-2">
+          <Divider />
+        </div>
+
+        <NavLink
+          to={ROUTES.CLIENT.SETTINGS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+          className={({ isActive }) =>
+            `px-3 py-2 rounded-lg transition-colors duration-200 ${
+              isActive 
+                ? "bg-gray-100 text-gray-900 font-medium" 
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            }`
+          }
+        >
+          Nastavení
+        </NavLink>
       </nav>
     </aside>
   );
