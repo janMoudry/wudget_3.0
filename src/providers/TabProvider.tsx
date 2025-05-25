@@ -20,6 +20,7 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
   const { data: client, isLoading, isError } = useClient(clientId ?? "");
   const { getItem, setItem } = useStorage();
   const [period, setPeriod] = useState<Period>("month");
+  const [accountId, setAccountId] = useState<string>("");
   const navigate = useNavigate();
   const { data: statementsCheck } = useStatementsCheck(clientId ?? "");
 
@@ -27,11 +28,16 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (client && !tab) {
+      const mainAccount = client.accounts.find(acc => acc.flags.includes("main"));
       addTab({
         id: client.id,
         title: client.name,
-        period: "month"
+        period: "month",
+        accountId: mainAccount?.id
       });
+      if (mainAccount) {
+        setAccountId(mainAccount.id);
+      }
     }
   }, [addTab, client, tab]);
 
@@ -39,6 +45,11 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
     const periods = getItem(STORAGE_KEYS.PERIOD) || {};
     if (clientId && periods[clientId]) {
       setPeriod(periods[clientId]);
+    }
+
+    const accounts = getItem(STORAGE_KEYS.ACCOUNT) || {};
+    if (clientId && accounts[clientId]) {
+      setAccountId(accounts[clientId]);
     }
   }, [clientId, getItem]);
 
@@ -73,21 +84,28 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
     }
   };
 
+  const handleSetAccountId = (newAccountId: string) => {
+    setAccountId(newAccountId);
+    if (clientId) {
+      const accounts = getItem(STORAGE_KEYS.ACCOUNT) || {};
+      setItem(STORAGE_KEYS.ACCOUNT, { ...accounts, [clientId]: newAccountId });
+    }
+  };
+
   if (!tab) return null;
 
   return (
     <TabContext.Provider
       value={{ 
-        tab: { ...tab, period }, 
+        tab: { ...tab, period, accountId }, 
         client: client || null, 
         isLoading, 
         isError,
-        setPeriod: handleSetPeriod
+        setPeriod: handleSetPeriod,
+        setAccountId: handleSetAccountId
       }}
     >
       {children}
     </TabContext.Provider>
   );
 };
-
-export default TabProvider;

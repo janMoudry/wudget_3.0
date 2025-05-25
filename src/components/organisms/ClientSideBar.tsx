@@ -5,11 +5,11 @@ import { Select, Divider } from "../atoms";
 import { PERIOD_LABELS } from "../../types/period";
 
 const ClientSidebar = () => {
-  const { tab, setPeriod } = useTab();
+  const { tab, client, setPeriod, setAccountId } = useTab();
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 p-4 h-full">
-      <div className="mb-6">
+      <div className="space-y-4 mb-6">
         <Select
           value={tab.period}
           onChange={(e) => setPeriod(e.target.value as any)}
@@ -20,6 +20,20 @@ const ClientSidebar = () => {
             </option>
           ))}
         </Select>
+
+        {client && client.accounts.length > 1 && (
+          <Select
+            value={tab.accountId}
+            onChange={(e) => setAccountId(e.target.value)}
+          >
+            {client.accounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+                {account.flags.length > 0 && ` (${account.flags.join(", ")})`}
+              </option>
+            ))}
+          </Select>
+        )}
       </div>
 
       <nav className="flex flex-col gap-2 text-sm">

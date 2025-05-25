@@ -8,5 +8,23 @@
 	"lastUpdatedAt": "2025-02-10T09:00:00Z",
 	"status": "inactive",
 	"notes": "Neaktivní klient – naposledy aktivní v prosinci 2024.",
-	"tags": ["neaktivní", "IT", "bývalý klient"]
+	"tags": ["neaktivní", "IT", "bývalý klient"],
+	"accounts": [
+		{
+			"id": "acc-005",
+			"name": "Osobní účet",
+			"flags": ["main", "personal"],
+			"bankName": "Fio banka",
+			"currency": "CZK",
+			"balance": 780000
+		},
+		{
+			"id": "acc-006",
+			"name": "Spořící účet",
+			"flags": ["savings"],
+			"bankName": "AirBank",
+			"currency": "CZK",
+			"balance": 1500000
+		}
+	]
 }

@@ -8,5 +8,31 @@
 	"lastUpdatedAt": "2025-04-15T17:42:00Z",
 	"status": "missing-data",
 	"notes": "Zatím chybí výpisy za poslední 3 měsíce.",
-	"tags": ["chybí výpis", "potenciál", "realitka"]
+	"tags": ["chybí výpis", "potenciál", "realitka"],
+	"accounts": [
+		{
+			"id": "acc-002",
+			"name": "Firemní účet",
+			"flags": ["main", "business"],
+			"bankName": "Komerční banka",
+			"currency": "CZK",
+			"balance": 1250000
+		},
+		{
+			"id": "acc-003",
+			"name": "Provozní účet",
+			"flags": ["operational"],
+			"bankName": "ČSOB",
+			"currency": "CZK",
+			"balance": 350000
+		},
+		{
+			"id": "acc-004",
+			"name": "EUR účet",
+			"flags": ["foreign"],
+			"bankName": "Komerční banka",
+			"currency": "EUR",
+			"balance": 45000
+		}
+	]
 }

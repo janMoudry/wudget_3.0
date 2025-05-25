@@ -8,5 +8,15 @@
 	"lastUpdatedAt": "2025-05-20T08:25:00Z",
 	"status": "ok",
 	"notes": "Klient má pravidelné výpisy. Poslední audit bez připomínek.",
-	"tags": ["aktivní", "VIP", "dlouhodobý"]
+	"tags": ["aktivní", "VIP", "dlouhodobý"],
+	"accounts": [
+		{
+			"id": "acc-001",
+			"name": "Hlavní účet",
+			"flags": ["main"],
+			"bankName": "AirBank",
+			"currency": "CZK",
+			"balance": 250000
+		}
+	]
 }

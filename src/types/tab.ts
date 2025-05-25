@@ -5,6 +5,7 @@ export type Tab = {
   id: string;
   title: string;
   period: Period;
+  accountId?: string;
 };
 
 export type TabContextType = {
@@ -13,4 +14,5 @@ export type TabContextType = {
   isLoading: boolean;
   isError: boolean;
   setPeriod: (period: Period) => void;
+  setAccountId: (accountId: string) => void;
 };
