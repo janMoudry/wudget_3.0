@@ -25,5 +25,6 @@ export const ROUTES = {
     ACCOUNT_EDIT: "/:clientId/accounts/:accountId/edit",
     ACCOUNT_CREATE: "/:clientId/accounts/create",
     PRODUCTS: "/:clientId/products",
+    COUNTERPARTIES: "/:clientId/counterparties",
   },
 };

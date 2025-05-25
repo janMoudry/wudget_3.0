@@ -32,6 +32,7 @@ const Navigation = () => (
       <Route path={ROUTES.CLIENT.ACCOUNT_EDIT} element={<PAGES.ACCOUNT_EDIT />} />
       <Route path={ROUTES.CLIENT.ACCOUNT_CREATE} element={<PAGES.ACCOUNT_CREATE />} />
       <Route path={ROUTES.CLIENT.PRODUCTS} element={<PAGES.CLIENT_PRODUCTS />} />
+      <Route path={ROUTES.CLIENT.COUNTERPARTIES} element={<PAGES.COUNTERPARTIES />} />
     </Route>
   </Routes>
 );

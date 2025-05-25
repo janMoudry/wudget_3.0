@@ -21,4 +21,5 @@ export const PAGES = {
   PRODUCT_CREATE: lazy(() => import("../pages/ProductCreate")),
   PRODUCT_EDIT: lazy(() => import("../pages/ProductEdit")),
   CLIENT_PRODUCTS: lazy(() => import("../pages/ClientProducts")),
+  COUNTERPARTIES: lazy(() => import("../pages/Counterparties")),
 };
