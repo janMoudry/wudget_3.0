@@ -4,7 +4,7 @@ import { AppBar, ClientSideBar } from "../organisms";
 import { TabProvider } from "../../providers";
 import { useTab } from "../../hooks/useTab";
 
-const BaseLayout = () => {
+const ClientLayout = () => {
 	return (
 		<TabProvider>
 			<BaseLayoutComponent />
@@ -36,4 +36,4 @@ const BaseLayoutComponent = () => {
 	);
 };
 
-export default BaseLayout;
+export default ClientLayout;
