@@ -4,6 +4,7 @@ export const ROUTES = {
   // General
   DASHBOARD: "/",
   CLIENTS: "/clients",
+  CLIENT_CREATE: "/clients/create",
   PROFILE: "/profile",
   SETTINGS: "/settings",
 

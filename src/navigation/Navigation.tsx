@@ -12,6 +12,7 @@ const Navigation = () => (
       {/* General */}
       <Route path={ROUTES.DASHBOARD} element={<PAGES.DASHBOARD />} />
       <Route path={ROUTES.CLIENTS} element={<PAGES.CLIENTS />} />
+      <Route path={ROUTES.CLIENT_CREATE} element={<PAGES.CLIENT_CREATE />} />
       <Route path={ROUTES.PROFILE} element={<PAGES.PROFILE />} />
       <Route path={ROUTES.SETTINGS} element={<PAGES.SETTINGS />} />
     </Route>

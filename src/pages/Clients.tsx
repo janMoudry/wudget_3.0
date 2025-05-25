@@ -1,14 +1,16 @@
-// src/pages/Clients.tsx
 import { useClients } from "../api/getClients";
 import { ClientCard } from "../components/molecules";
 import { Button, TextField, Typography } from "../components";
-import { Search, Users } from "lucide-react";
+import { Search, Users, Plus } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../navigation/ROUTES";
 
 const Clients = () => {
   const { data: clients, isLoading, isError } = useClients();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -35,20 +37,26 @@ const Clients = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gray-100 rounded-lg">
-            <Users className="w-5 h-5 text-gray-900" />
-          </div>
-          <div>
-            <Typography variant="h2" className="text-gray-900">
-              Klienti
-            </Typography>
-            <Typography variant="small" className="text-gray-500">
-              Seznam všech klientů a jejich stav
-            </Typography>
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <Users className="w-5 h-5 text-gray-900" />
+            </div>
+            <div>
+              <Typography variant="h2" className="text-gray-900">
+                Klienti
+              </Typography>
+              <Typography variant="small" className="text-gray-500">
+                Seznam všech klientů a jejich stav
+              </Typography>
+            </div>
           </div>
         </div>
+        <Button onClick={() => navigate(ROUTES.CLIENT_CREATE)}>
+          <Plus size={16} className="mr-2" />
+          Přidat klienta
+        </Button>
       </div>
 
       {/* Search and Filters */}
