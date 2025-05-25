@@ -39,11 +39,12 @@ const ClientSidebar = () => {
           ))}
         </Select>
 
-        {client && client.accounts.length > 1 && (
+        {client && client.accounts.length > 0 && (
           <Select
-            value={tab.accountId}
+            value={tab.accountId || "all"}
             onChange={(e) => setAccountId(e.target.value)}
           >
+            <option value="all">Všechny účty</option>
             {client.accounts.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.name}
@@ -52,7 +53,7 @@ const ClientSidebar = () => {
           </Select>
         )}
 
-        {client && client.accounts.length > 1 && (
+        {client && tab.accountId && tab.accountId !== "all" && (
           <div className="text-sm text-gray-600">
             {client.accounts.find((acc) => acc.id === tab.accountId)?.flags.map((flag) => (
               <span
