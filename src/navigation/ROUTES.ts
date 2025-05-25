@@ -12,5 +12,6 @@ export const ROUTES = {
 		DASHBOARD: "/:clientId/dashboard",
 		TRANSACTIONS: "/:clientId/transactions",
 		UPLOAD: "/:clientId/upload",
+		STATEMENTS: "/:clientId/statements",
 	},
 };

@@ -36,6 +36,18 @@ const ClientSidebar = () => {
           Dashboard
         </NavLink>
         <NavLink
+          to={ROUTES.CLIENT.STATEMENTS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+          className={({ isActive }) =>
+            `px-3 py-2 rounded-lg transition-colors duration-200 ${
+              isActive 
+                ? "bg-gray-100 text-gray-900 font-medium" 
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            }`
+          }
+        >
+          Výpisy
+        </NavLink>
+        <NavLink
           to={ROUTES.CLIENT.TRANSACTIONS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
           className={({ isActive }) =>
             `px-3 py-2 rounded-lg transition-colors duration-200 ${
