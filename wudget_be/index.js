@@ -180,40 +180,103 @@ app.get('/api/dashboard', async (req, res) => {
 });
 
 // Overview endpoint
-app.get('/api/overview', async (req, res) => {
+app.get('/api/overview/:clientId', async (req, res) => {
   try {
-    // For now, return mock data
-    const mockData = {
-      balance: 250000,
+    const { clientId } = req.params;
+
+    // Verify client exists
+    const client = await db.asyncGet('SELECT * FROM clients WHERE id = ?', [clientId]);
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
+
+    // Get client's total balance
+    const balance = await db.asyncGet(
+      'SELECT SUM(balance) as total FROM accounts WHERE client_id = ?',
+      [clientId]
+    );
+
+    // Get client's transaction stats
+    const stats = await db.asyncGet(`
+      SELECT 
+        COUNT(*) as totalTransactions,
+        SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as totalIncome,
+        SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as totalExpense
+      FROM transactions t
+      JOIN accounts a ON t.account_id = a.id
+      WHERE a.client_id = ?
+    `, [clientId]);
+
+    // Get daily transaction data
+    const dailyData = await db.asyncAll(`
+      SELECT 
+        date,
+        SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) as income,
+        SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
+      FROM transactions t
+      JOIN accounts a ON t.account_id = a.id
+      WHERE a.client_id = ?
+      GROUP BY date
+      ORDER BY date DESC
+      LIMIT 30
+    `, [clientId]);
+
+    // Get category distribution
+    const categoryData = await db.asyncAll(`
+      SELECT 
+        category,
+        type,
+        SUM(ABS(amount)) as total
+      FROM transactions t
+      JOIN accounts a ON t.account_id = a.id
+      WHERE a.client_id = ? AND category IS NOT NULL
+      GROUP BY category, type
+      ORDER BY total DESC
+    `, [clientId]);
+
+    // Get transaction labels
+    const labels = await db.asyncGet(`
+      SELECT 
+        (
+          SELECT category
+          FROM transactions t
+          JOIN accounts a ON t.account_id = a.id
+          WHERE a.client_id = ? AND category IS NOT NULL
+          GROUP BY category
+          ORDER BY COUNT(*) DESC
+          LIMIT 1
+        ) as mostUsedCategory,
+        (
+          SELECT counterparty || ' - ' || amount || ' ' || currency
+          FROM transactions t
+          JOIN accounts a ON t.account_id = a.id
+          WHERE a.client_id = ? AND type = 'income'
+          ORDER BY amount DESC
+          LIMIT 1
+        ) as highestIncome,
+        (
+          SELECT counterparty || ' - ' || ABS(amount) || ' ' || currency
+          FROM transactions t
+          JOIN accounts a ON t.account_id = a.id
+          WHERE a.client_id = ? AND type = 'expense'
+          ORDER BY amount ASC
+          LIMIT 1
+        ) as highestExpense
+    `, [clientId, clientId, clientId]);
+
+    res.json({
+      balance: balance.total || 0,
       stats: {
-        totalIncome: 450000,
-        totalExpense: -320000,
-        totalTransactions: 156
+        totalIncome: stats.totalIncome || 0,
+        totalExpense: stats.totalExpense || 0,
+        totalTransactions: stats.totalTransactions || 0
       },
       chartData: {
-        byDay: [
-          { date: "2025-03-01", income: 15000, expense: -12000 },
-          { date: "2025-03-02", income: 18000, expense: -15000 },
-          { date: "2025-03-03", income: 12000, expense: -8000 },
-          { date: "2025-03-04", income: 20000, expense: -18000 },
-          { date: "2025-03-05", income: 16000, expense: -13000 }
-        ],
-        byCategory: [
-          { category: "Potraviny", total: 25000, type: "expense" },
-          { category: "Doprava", total: 15000, type: "expense" },
-          { category: "Bydlení", total: 35000, type: "expense" },
-          { category: "Zábava", total: 12000, type: "expense" },
-          { category: "Ostatní", total: 8000, type: "expense" }
-        ]
+        byDay: dailyData,
+        byCategory: categoryData
       },
-      labels: {
-        mostUsedCategory: "Potraviny",
-        highestIncome: "Výplata - 45 000 Kč",
-        highestExpense: "Nájem - 15 000 Kč"
-      }
-    };
-
-    res.json(mockData);
+      labels
+    });
   } catch (error) {
     console.error('Error fetching overview:', error);
     res.status(500).json({ error: 'Failed to fetch overview' });
