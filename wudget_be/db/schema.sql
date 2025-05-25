@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Clients table
@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS clients (
   company TEXT,
   status TEXT DEFAULT 'active',
   notes TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Bank accounts table
@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS accounts (
   name TEXT NOT NULL,
   bank_name TEXT NOT NULL,
   currency TEXT DEFAULT 'CZK',
-  balance DECIMAL(15,2) DEFAULT 0,
+  balance REAL DEFAULT 0,
   flags TEXT, -- Stored as JSON array
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
 );
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS statements (
   id TEXT PRIMARY KEY,
   account_id TEXT NOT NULL,
   period TEXT NOT NULL, -- Format: YYYY-MM
-  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   transaction_count INTEGER DEFAULT 0,
   FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
 );
@@ -51,15 +51,15 @@ CREATE TABLE IF NOT EXISTS transactions (
   statement_id TEXT NOT NULL,
   account_id TEXT NOT NULL,
   date DATE NOT NULL,
-  amount DECIMAL(15,2) NOT NULL,
+  amount REAL NOT NULL,
   currency TEXT DEFAULT 'CZK',
   type TEXT CHECK(type IN ('income', 'expense')) NOT NULL,
   method TEXT,
   category TEXT,
   counterparty TEXT,
   note TEXT,
-  raw JSON,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  raw TEXT, -- SQLite doesn't have native JSON, store as TEXT
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (statement_id) REFERENCES statements(id) ON DELETE CASCADE,
   FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
 );
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS categories (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   type TEXT CHECK(type IN ('income', 'expense')) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Counterparties table
@@ -78,11 +78,11 @@ CREATE TABLE IF NOT EXISTS counterparties (
   client_id TEXT NOT NULL,
   name TEXT NOT NULL,
   category TEXT,
-  is_regular BOOLEAN DEFAULT 0,
-  exclude_from_stats BOOLEAN DEFAULT 0,
+  is_regular INTEGER DEFAULT 0, -- SQLite uses INTEGER for boolean
+  exclude_from_stats INTEGER DEFAULT 0, -- SQLite uses INTEGER for boolean
   note TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE
 );
 
