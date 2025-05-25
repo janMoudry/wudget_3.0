@@ -1,4 +1,3 @@
-```typescript
 import type { FC } from "react";
 import { Button, ModalContent, ModalFooter, ModalHeader } from "../atoms";
 import { Modal } from "../molecules";
@@ -40,4 +39,3 @@ const DeleteAccountModal: FC<DeleteAccountModalProps> = ({
 };
 
 export default DeleteAccountModal;
-```
