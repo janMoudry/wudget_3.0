@@ -42,36 +42,44 @@ const authenticate = (req, res, next) => {
 
 // Login endpoint
 app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    const user = await db.asyncGet('SELECT * FROM users WHERE email = ?', [email]);
+    const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    // Get user from database
+    const user = await db.asyncGet('SELECT * FROM users WHERE email = ?', [email]);
+    
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
+    // Compare password with hash
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Create JWT token
+    // Create token
     const token = jwt.sign(
-      { id: user.id, email: user.email, name: user.name },
+      { id: user.id, email: user.email },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
 
     // Return user data without password
-    const { password: _, ...safeUser } = user;
+    const { password: _, ...userData } = user;
+    
     res.json({
-      ...safeUser,
-      token,
+      ...userData,
+      token
     });
-  } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ error: 'Server error' });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
