@@ -32,6 +32,10 @@ const Accounts = () => {
     setAccountToDelete(null);
   };
 
+  const handleAddAccount = () => {
+    navigate(ROUTES.CLIENT.ACCOUNT_CREATE.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`));
+  };
+
   const getFlagColor = (flag: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
       main: { bg: "bg-blue-100", text: "text-blue-800" },
@@ -124,7 +128,7 @@ const Accounts = () => {
 
       {/* Add Account Button */}
       <div>
-        <Button variant="secondary">
+        <Button variant="secondary" onClick={handleAddAccount}>
           <Plus size={16} className="mr-2" />
           Přidat účet
         </Button>

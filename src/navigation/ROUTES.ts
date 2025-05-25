@@ -17,5 +17,6 @@ export const ROUTES = {
     SETTINGS: "/:clientId/settings",
     ACCOUNTS: "/:clientId/accounts",
     ACCOUNT_EDIT: "/:clientId/accounts/:accountId/edit",
+    ACCOUNT_CREATE: "/:clientId/accounts/create",
   },
 };

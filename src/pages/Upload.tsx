@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Button, Typography, Paper } from "../components";
+import { Button, Typography, Paper, Select } from "../components";
 import { Upload as UploadIcon, X, FileText, AlertCircle, CheckCircle2 } from "lucide-react";
 import clsx from "classnames";
+import { useTab } from "../hooks/useTab";
 
 const Upload = () => {
+  const { client } = useTab();
   const [bank, setBank] = useState<string | null>(null);
+  const [selectedAccount, setSelectedAccount] = useState<string>("all");
   const [uploadStatus, setUploadStatus] = useState<{
     status: "idle" | "uploading" | "success" | "error";
     message?: string;
@@ -19,7 +22,6 @@ const Upload = () => {
   });
 
   const handleRemoveFile = () => {
-    // Create a new FileList-like object without the files
     Object.assign(acceptedFiles, { length: 0 });
   };
 
@@ -67,6 +69,26 @@ const Upload = () => {
           Nahrajte výpis z účtu pro zpracování transakcí
         </Typography>
       </div>
+
+      {/* Account Selection */}
+      {client && (
+        <Paper className="p-6">
+          <Typography variant="h3" className="mb-4">
+            Vyberte účet
+          </Typography>
+          <Select
+            value={selectedAccount}
+            onChange={(e) => setSelectedAccount(e.target.value)}
+          >
+            <option value="all">Všechny účty</option>
+            {client.accounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name} ({account.bankName})
+              </option>
+            ))}
+          </Select>
+        </Paper>
+      )}
 
       {/* Bank Selection */}
       <Paper className="p-6">
