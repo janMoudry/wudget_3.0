@@ -1,4 +1,4 @@
-```typescript
+```typescript```
 import { Route, Routes } from "react-router";
 import { ROUTES } from "./ROUTES";
 import { PAGES } from "./PAGES";
@@ -30,4 +30,3 @@ const Navigation = () => (
 );
 
 export default Navigation;
-```
