@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { fileURLToPath } from 'url';
 import db from './db/index.js';
+import { normalizeAirbank } from './normalizers/airbank.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -238,30 +239,118 @@ app.delete('/api/clients/:id', async (req, res) => {
 });
 
 // Upload endpoint
-app.post('/api/upload', upload.single('file'), (req, res) => {
-  const bank = req.query.bank;
-  if (!req.file || !bank) {
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  const { bank, accountId, clientId } = req.query;
+  
+  if (!req.file || !bank || !accountId || !clientId) {
     return res.status(400).json({
-      error: 'Missing file or invalid/missing bank parameter.',
+      error: 'Missing required parameters.',
     });
   }
 
-  const rows = [];
   const filePath = path.join(__dirname, req.file.path);
+  const transactions = [];
 
-  fs.createReadStream(filePath)
-    .pipe(iconv.decodeStream('win1250'))
-    .pipe(csv({ separator: ';' }))
-    .on('data', (data) => rows.push(data))
-    .on('end', () => {
-      fs.unlinkSync(filePath);
-      res.json({ success: true, count: rows.length });
-    })
-    .on('error', (err) => {
-      console.error('CSV parsing error:', err);
-      fs.unlinkSync(filePath);
-      res.status(500).json({ error: 'CSV parsing failed.' });
+  try {
+    // Generate statement ID
+    const statementId = `statement-${Date.now()}`;
+    
+    // Create read stream with proper encoding
+    const fileStream = fs.createReadStream(filePath)
+      .pipe(iconv.decodeStream('win1250'))
+      .pipe(csv({ separator: ';' }));
+
+    // Process each row
+    for await (const row of fileStream) {
+      let normalizedTransaction;
+      
+      // Normalize based on bank type
+      switch (bank) {
+        case 'airbank':
+          normalizedTransaction = normalizeAirbank(row);
+          break;
+        // Add other banks here
+        default:
+          throw new Error(`Unsupported bank: ${bank}`);
+      }
+
+      if (normalizedTransaction) {
+        transactions.push({
+          ...normalizedTransaction,
+          id: `transaction-${Date.now()}-${transactions.length}`,
+          statementId,
+          accountId
+        });
+      }
+    }
+
+    // Start transaction
+    await db.asyncRun('BEGIN TRANSACTION');
+
+    // Insert statement
+    await db.asyncRun(
+      'INSERT INTO statements (id, account_id, period, transaction_count) VALUES (?, ?, ?, ?)',
+      [statementId, accountId, '2025-05', transactions.length]
+    );
+
+    // Insert transactions
+    for (const transaction of transactions) {
+      await db.asyncRun(
+        `INSERT INTO transactions (
+          id, statement_id, account_id, date, amount, currency, type,
+          method, category, counterparty, note, raw
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          transaction.id,
+          transaction.statementId,
+          transaction.accountId,
+          transaction.date,
+          transaction.amount,
+          transaction.currency,
+          transaction.type,
+          transaction.method,
+          transaction.category,
+          transaction.counterparty,
+          transaction.note,
+          JSON.stringify(transaction.raw)
+        ]
+      );
+    }
+
+    // Update account balance
+    const totalAmount = transactions.reduce((sum, t) => sum + t.amount, 0);
+    await db.asyncRun(
+      'UPDATE accounts SET balance = balance + ? WHERE id = ?',
+      [totalAmount, accountId]
+    );
+
+    // Commit transaction
+    await db.asyncRun('COMMIT');
+
+    // Clean up uploaded file
+    fs.unlinkSync(filePath);
+
+    res.json({ 
+      success: true, 
+      transactionCount: transactions.length,
+      statementId
     });
+  } catch (error) {
+    // Rollback on error
+    await db.asyncRun('ROLLBACK');
+    
+    console.error('Error processing file:', error);
+    
+    // Clean up uploaded file
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    
+    res.status(500).json({ 
+      error: 'Failed to process file',
+      details: error.message
+    });
+  }
 });
 
 app.listen(port, () => {

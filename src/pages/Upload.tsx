@@ -4,11 +4,15 @@ import { Button, Typography, Paper, Select } from "../components";
 import { Upload as UploadIcon, X, FileText, AlertCircle, CheckCircle2 } from "lucide-react";
 import clsx from "classnames";
 import { useTab } from "../hooks/useTab";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../navigation/ROUTES";
 
 const Upload = () => {
-  const { client } = useTab();
+  const { client, tab } = useTab();
+  const navigate = useNavigate();
   const [bank, setBank] = useState<string | null>(null);
-  const [selectedAccount, setSelectedAccount] = useState<string>("all");
+  const [selectedAccount, setSelectedAccount] = useState<string>("");
   const [uploadStatus, setUploadStatus] = useState<{
     status: "idle" | "uploading" | "success" | "error";
     message?: string;
@@ -22,11 +26,14 @@ const Upload = () => {
   });
 
   const handleRemoveFile = () => {
-    Object.assign(acceptedFiles, { length: 0 });
+    acceptedFiles.splice(0, acceptedFiles.length);
   };
 
   const handleUpload = async () => {
-    if (!bank || !acceptedFiles || acceptedFiles.length === 0) return;
+    if (!bank || !acceptedFiles.length || !selectedAccount) {
+      toast.error("Vyberte banku, účet a soubor pro nahrání");
+      return;
+    }
 
     setUploadStatus({ status: "uploading" });
 
@@ -34,22 +41,47 @@ const Upload = () => {
       const formData = new FormData();
       formData.append("file", acceptedFiles[0]);
 
-      const response = await fetch(`http://localhost:3001/upload?bank=${bank}`, {
-        method: "POST",
-        body: formData,
-      });
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `http://localhost:3001/api/upload?bank=${bank}&accountId=${selectedAccount}&clientId=${tab.id}`, 
+        {
+          method: "POST",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData,
+        }
+      );
 
-      if (!response.ok) throw new Error("Upload failed");
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Upload failed");
+      }
 
+      const result = await response.json();
+      
       setUploadStatus({
         status: "success",
-        message: "Soubor byl úspěšně nahrán",
+        message: `Soubor byl úspěšně nahrán. Zpracováno ${result.transactionCount} transakcí.`,
       });
+
+      // Clear the file
+      handleRemoveFile();
+
+      // Show success toast
+      toast.success("Výpis byl úspěšně nahrán");
+
+      // Redirect to transactions
+      setTimeout(() => {
+        navigate(ROUTES.CLIENT.TRANSACTIONS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`));
+      }, 2000);
     } catch (error) {
+      console.error('Upload error:', error);
       setUploadStatus({
         status: "error",
-        message: "Chyba při nahrávání souboru",
+        message: error instanceof Error ? error.message : "Chyba při nahrávání souboru",
       });
+      toast.error("Nepodařilo se nahrát výpis");
     }
   };
 
@@ -80,7 +112,7 @@ const Upload = () => {
             value={selectedAccount}
             onChange={(e) => setSelectedAccount(e.target.value)}
           >
-            <option value="all">Všechny účty</option>
+            <option value="">Vyberte účet</option>
             {client.accounts.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.name} ({account.bankName})
@@ -97,7 +129,7 @@ const Upload = () => {
         </Typography>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {["airbank", "kb", "csob", "fio"].map((bankName) => (
-            <Button
+            <button
               key={bankName}
               onClick={() => setBank(bankName)}
               className={clsx(
@@ -109,13 +141,13 @@ const Upload = () => {
               )}
             >
               <span className="capitalize">{bankName}</span>
-            </Button>
+            </button>
           ))}
         </div>
       </Paper>
 
       {/* Upload Area */}
-      {bank && (
+      {bank && selectedAccount && (
         <Paper className="p-6">
           <Typography variant="h3" className="mb-4">
             Nahrát soubor
@@ -170,7 +202,10 @@ const Upload = () => {
                     </div>
                   </div>
                   <button
-                    onClick={handleRemoveFile}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveFile();
+                    }}
                     className="p-1 hover:bg-gray-200 rounded-full transition-colors"
                   >
                     <X className="w-4 h-4 text-gray-500" />
