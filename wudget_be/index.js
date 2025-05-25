@@ -86,6 +86,47 @@ app.post('/api/login', async (req, res) => {
 // Protected routes
 app.use('/api', authenticate);
 
+// Overview endpoint
+app.get('/api/overview', async (req, res) => {
+  try {
+    // For now, return mock data
+    const mockData = {
+      balance: 250000,
+      stats: {
+        totalIncome: 450000,
+        totalExpense: -320000,
+        totalTransactions: 156
+      },
+      chartData: {
+        byDay: [
+          { date: "2025-03-01", income: 15000, expense: -12000 },
+          { date: "2025-03-02", income: 18000, expense: -15000 },
+          { date: "2025-03-03", income: 12000, expense: -8000 },
+          { date: "2025-03-04", income: 20000, expense: -18000 },
+          { date: "2025-03-05", income: 16000, expense: -13000 }
+        ],
+        byCategory: [
+          { category: "Potraviny", total: 25000, type: "expense" },
+          { category: "Doprava", total: 15000, type: "expense" },
+          { category: "Bydlení", total: 35000, type: "expense" },
+          { category: "Zábava", total: 12000, type: "expense" },
+          { category: "Ostatní", total: 8000, type: "expense" }
+        ]
+      },
+      labels: {
+        mostUsedCategory: "Potraviny",
+        highestIncome: "Výplata - 45 000 Kč",
+        highestExpense: "Nájem - 15 000 Kč"
+      }
+    };
+
+    res.json(mockData);
+  } catch (error) {
+    console.error('Error fetching overview:', error);
+    res.status(500).json({ error: 'Failed to fetch overview' });
+  }
+});
+
 // Client endpoints
 app.get('/api/clients', async (req, res) => {
   try {
