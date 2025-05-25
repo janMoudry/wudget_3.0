@@ -1,4 +1,3 @@
-```typescript```
 import { lazy } from "react";
 
 export const PAGES = {
