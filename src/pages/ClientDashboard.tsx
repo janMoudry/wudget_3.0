@@ -1,89 +1,71 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useTab } from "../hooks/useTab";
 import { Typography, Paper, Button } from "../components";
 import { TrendingUp, CreditCard, Wallet, ArrowDownUp, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../navigation/ROUTES";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-  LineChart,
-  Line,
-} from "recharts";
+
+type OverviewData = {
+  balance: number;
+  stats: {
+    totalIncome: number;
+    totalExpense: number;
+    totalTransactions: number;
+  };
+  chartData: {
+    byDay: {
+      date: string;
+      income: number;
+      expense: number;
+    }[];
+    byCategory: {
+      category: string;
+      total: number;
+      type: string;
+    }[];
+  };
+  labels: {
+    mostUsedCategory: string;
+    highestIncome: string;
+    highestExpense: string;
+  };
+};
+
+const getOverviewData = async (clientId: string): Promise<OverviewData> => {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`http://localhost:3001/api/overview/${clientId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  if (!res.ok) throw new Error("Failed to fetch overview data");
+  return res.json();
+};
 
 const ClientDashboard = () => {
   const { client, tab } = useTab();
   const navigate = useNavigate();
-  const [overview, setOverview] = useState<{
-    balance: number;
-    stats: {
-      totalIncome: number;
-      totalExpense: number;
-      totalTransactions: number;
-    };
-    chartData: {
-      byDay: { date: string; income: number; expense: number }[];
-      byCategory: { category: string; total: number; type: string }[];
-    };
-    labels: {
-      mostUsedCategory: string;
-      highestIncome: string;
-      highestExpense: string;
-    };
-  } | null>(null);
+  const { data: overview, isLoading, isError } = useQuery({
+    queryKey: ['overview', tab.id],
+    queryFn: () => getOverviewData(tab.id),
+    enabled: !!tab.id
+  });
 
-  useEffect(() => {
-    const fetchOverview = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const res = await fetch("http://localhost:3001/api/overview", {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!res.ok) throw new Error("Failed to fetch overview");
-        const json = await res.json();
-        const normalized = {
-          ...json,
-          chartData: {
-            byDay: json.chartData.byDay.map(
-              (entry: { expense: number }) => ({
-                ...entry,
-                expense: Math.abs(entry.expense),
-              })
-            ),
-            byCategory: json.chartData.byCategory
-              .filter((entry: { type: string }) => entry.type === "expense")
-              .map((entry: { total: number }) => ({
-                ...entry,
-                total: Math.abs(entry.total),
-              })),
-          },
-        };
-        setOverview(normalized);
-      } catch (err) {
-        console.error("Error fetching overview:", err);
-        setOverview(null);
-      }
-    };
+  if (!overview || isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-14rem)] text-center">
+        <div className="text-gray-600 text-lg">Načítám data...</div>
+      </div>
+    );
+  }
 
-    if (client?.id) {
-      fetchOverview();
-    }
-  }, [client?.id]);
-
-  if (!overview) {
+  if (isError || !client) {
     return (
       <div className="flex flex-col items-center justify-center h-[calc(100vh-14rem)] text-center">
         <div className="mb-8">
           <Typography variant="h2" className="text-gray-900 mb-4">
-            Zatím zde nejsou žádná data
+            Chyba při načítání dat
           </Typography>
           <Typography variant="body" className="text-gray-600 mb-8">
             Pro zobrazení přehledu je potřeba nahrát první bankovní výpis
@@ -108,7 +90,7 @@ const ClientDashboard = () => {
             <TrendingUp className="w-5 h-5 text-gray-900" />
           </div>
           <Typography variant="h2" className="text-gray-900">
-            {client?.name}
+            {client.name}
           </Typography>
         </div>
         <Typography variant="small" className="text-gray-500">
@@ -199,73 +181,77 @@ const ClientDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Paper className="p-6">
           <Typography variant="h3" className="mb-6">Vývoj v čase</Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={overview.chartData.byDay}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="date" stroke="#6B7280" />
-              <YAxis stroke="#6B7280" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #E5E7EB",
-                  borderRadius: "8px",
-                }}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="income"
-                stroke="#10B981"
-                name="Příjmy"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="expense"
-                stroke="#EF4444"
-                name="Výdaje"
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={overview.chartData.byDay}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis dataKey="date" stroke="#6B7280" />
+                <YAxis stroke="#6B7280" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "white",
+                    border: "1px solid #E5E7EB",
+                    borderRadius: "8px",
+                  }}
+                />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="income"
+                  stroke="#10B981"
+                  name="Příjmy"
+                  strokeWidth={2}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="expense"
+                  stroke="#EF4444"
+                  name="Výdaje"
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </Paper>
 
         <Paper className="p-6">
           <Typography variant="h3" className="mb-6">Kategorie výdajů</Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={overview.chartData.byCategory}
-              layout="vertical"
-              margin={{ top: 0, right: 0, left: 40, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis type="number" stroke="#6B7280" />
-              <YAxis
-                dataKey="category"
-                type="category"
-                stroke="#6B7280"
-                width={100}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #E5E7EB",
-                  borderRadius: "8px",
-                }}
-                formatter={(value) =>
-                  Number(value).toLocaleString("cs-CZ", {
-                    style: "currency",
-                    currency: "CZK",
-                  })
-                }
-              />
-              <Bar
-                dataKey="total"
-                fill="#6366F1"
-                radius={[0, 4, 4, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={overview.chartData.byCategory}
+                layout="vertical"
+                margin={{ top: 0, right: 0, left: 40, bottom: 0 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                <XAxis type="number" stroke="#6B7280" />
+                <YAxis
+                  dataKey="category"
+                  type="category"
+                  stroke="#6B7280"
+                  width={100}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "white",
+                    border: "1px solid #E5E7EB",
+                    borderRadius: "8px",
+                  }}
+                  formatter={(value) =>
+                    Number(value).toLocaleString("cs-CZ", {
+                      style: "currency",
+                      currency: "CZK",
+                    })
+                  }
+                />
+                <Bar
+                  dataKey="total"
+                  fill="#6366F1"
+                  radius={[0, 4, 4, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </Paper>
       </div>
 
