@@ -24,7 +24,13 @@ export type ClientDetail = {
 import { useQuery } from "@tanstack/react-query";
 
 const getClient = async (id: string): Promise<ClientDetail> => {
-  const res = await fetch(`/MOCK/${id}.json`);
+  const token = localStorage.getItem('token');
+  const res = await fetch(`http://localhost:3001/api/clients/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
   if (!res.ok) throw new Error("Nepodařilo se načíst detail klienta");
   return res.json();
 };
