@@ -8,5 +8,5 @@ export const PAGES = {
 	TRANSACTIONS: lazy(() => import("../pages/Transactions")),
 	UPLOAD: lazy(() => import("../pages/Upload")),
 	PROFILE: lazy(() => import("../pages/Profile")),
-	STATEMENTS: lazy(() => import("../pages/Statements")),
+	STATEMENTS: lazy(() => import("../pages/Statements.tsx")),
 };
