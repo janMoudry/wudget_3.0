@@ -8,6 +8,7 @@ import { STORAGE_KEYS } from "../types/storage";
 import type { Period } from "../types/period";
 import { toast } from "react-toastify";
 import { ROUTES } from "../navigation/ROUTES";
+import { useStatementsCheck } from "../api/checkStatements";
 
 interface TabProviderProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
   const { getItem, setItem } = useStorage();
   const [period, setPeriod] = useState<Period>("month");
   const navigate = useNavigate();
+  const { data: statementsCheck } = useStatementsCheck(clientId ?? "");
 
   const tab = getTab(clientId ?? "");
 
@@ -41,10 +43,10 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
   }, [clientId, getItem]);
 
   useEffect(() => {
-    if (client) {
+    if (statementsCheck?.status === "incomplete" && client) {
       toast.warning(
         <div>
-          <p className="mb-2">Klientovi chybí některé výpisy</p>
+          <p className="mb-2">Klientovi chybí výpisy za {statementsCheck.missingPeriods.length} období</p>
           <button
             onClick={() => {
               navigate(ROUTES.CLIENT.STATEMENTS.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`));
@@ -61,7 +63,7 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
         }
       );
     }
-  }, []);
+  }, [client, navigate, statementsCheck]);
 
   const handleSetPeriod = (newPeriod: Period) => {
     setPeriod(newPeriod);
