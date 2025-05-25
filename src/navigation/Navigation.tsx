@@ -33,6 +33,7 @@ const Navigation = () => (
       <Route path={ROUTES.CLIENT.ACCOUNT_CREATE} element={<PAGES.ACCOUNT_CREATE />} />
       <Route path={ROUTES.CLIENT.PRODUCTS} element={<PAGES.CLIENT_PRODUCTS />} />
       <Route path={ROUTES.CLIENT.COUNTERPARTIES} element={<PAGES.COUNTERPARTIES />} />
+      <Route path={ROUTES.CLIENT.SUBSCRIPTIONS} element={<PAGES.SUBSCRIPTIONS />} />
     </Route>
   </Routes>
 );
