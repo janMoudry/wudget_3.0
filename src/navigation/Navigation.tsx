@@ -16,6 +16,7 @@ const Navigation = () => (
       <Route path={ROUTES.PROFILE} element={<PAGES.PROFILE />} />
       <Route path={ROUTES.SETTINGS} element={<PAGES.SETTINGS />} />
       <Route path={ROUTES.CALCULATOR} element={<PAGES.CALCULATOR />} />
+      <Route path={ROUTES.REPORTS} element={<PAGES.REPORTS />} />
     </Route>
     {/* Client */}
     <Route path={ROUTES.CLIENT_ROOT} element={<ClientLayout />}>

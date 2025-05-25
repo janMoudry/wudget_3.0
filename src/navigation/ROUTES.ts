@@ -8,6 +8,7 @@ export const ROUTES = {
   PROFILE: "/profile",
   SETTINGS: "/settings",
   CALCULATOR: "/calculator",
+  REPORTS: "/reports",
 
   // Client
   CLIENT_ROOT: "/:clientId/",
