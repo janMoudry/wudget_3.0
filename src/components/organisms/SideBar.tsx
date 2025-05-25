@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { ROUTES } from "../../navigation/ROUTES";
 import { Divider } from "../atoms";
-import { LayoutDashboard, Users, Settings } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Calculator } from "lucide-react";
 
 const SideBar = () => {
   return (
@@ -34,6 +34,19 @@ const SideBar = () => {
           >
             <Users size={18} />
             Klienti
+          </NavLink>
+          <NavLink
+            to={ROUTES.CALCULATOR}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                isActive 
+                  ? "bg-gray-100 text-gray-900 font-medium" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`
+            }
+          >
+            <Calculator size={18} />
+            Kalkulačka
           </NavLink>
         </div>
 

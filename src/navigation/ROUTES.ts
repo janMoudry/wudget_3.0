@@ -7,6 +7,7 @@ export const ROUTES = {
   CLIENT_CREATE: "/clients/create",
   PROFILE: "/profile",
   SETTINGS: "/settings",
+  CALCULATOR: "/calculator",
 
   // Client
   CLIENT_ROOT: "/:clientId/",
