@@ -55,6 +55,12 @@ const Upload = () => {
       return;
     }
 
+    if (!selectedAccountDetails) {
+      toast.error("Vyberte platný účet před nahráním");
+      setUploadStatus({ status: "error", message: "Nebyl vybrán platný účet" });
+      return;
+    }
+
     setUploadStatus({ status: "uploading" });
 
     try {
@@ -63,7 +69,7 @@ const Upload = () => {
 
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3001/api/upload?accountId=${selectedAccount}&clientId=${tab.id}&bank=${selectedAccountDetails?.bankName.toLowerCase()}`,
+        `http://localhost:3001/api/upload?accountId=${selectedAccount}&clientId=${tab.id}&bank=${selectedAccountDetails.bankName.toLowerCase()}`,
         {
           method: "POST",
           headers: {
