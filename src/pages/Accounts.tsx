@@ -1,13 +1,49 @@
+```typescript
 import { useState } from "react";
 import { Button, Typography, Paper } from "../components";
 import { useTab } from "../hooks/useTab";
 import { Wallet, PencilLine, Trash2, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../navigation/ROUTES";
+import DeleteAccountModal from "../components/modals/DeleteAccountModal";
+import type { Account } from "../api/getClient";
 
 const Accounts = () => {
   const { client } = useTab();
-  const [editingAccount, setEditingAccount] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [accountToDelete, setAccountToDelete] = useState<Account | null>(null);
 
   if (!client) return null;
+
+  const handleEdit = (accountId: string) => {
+    navigate(
+      ROUTES.CLIENT.ACCOUNT_EDIT.replace(ROUTES.CLIENT_ROOT, `/${client.id}/`).replace(
+        ":accountId",
+        accountId
+      )
+    );
+  };
+
+  const handleDelete = (account: Account) => {
+    setAccountToDelete(account);
+  };
+
+  const handleConfirmDelete = () => {
+    // Here would be the API call to delete the account
+    setAccountToDelete(null);
+  };
+
+  const getFlagColor = (flag: string) => {
+    const colors: Record<string, { bg: string; text: string }> = {
+      main: { bg: "bg-blue-100", text: "text-blue-800" },
+      business: { bg: "bg-purple-100", text: "text-purple-800" },
+      personal: { bg: "bg-green-100", text: "text-green-800" },
+      savings: { bg: "bg-amber-100", text: "text-amber-800" },
+      operational: { bg: "bg-indigo-100", text: "text-indigo-800" },
+      foreign: { bg: "bg-rose-100", text: "text-rose-800" },
+    };
+    return colors[flag] || { bg: "bg-gray-100", text: "text-gray-800" };
+  };
 
   return (
     <div className="space-y-6">
@@ -49,15 +85,18 @@ const Accounts = () => {
                       })}
                     </span>
                   </div>
-                  <div className="flex gap-2 mt-2">
-                    {account.flags.map((flag) => (
-                      <span
-                        key={flag}
-                        className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700"
-                      >
-                        {flag}
-                      </span>
-                    ))}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {account.flags.map((flag) => {
+                      const { bg, text } = getFlagColor(flag);
+                      return (
+                        <span
+                          key={flag}
+                          className={`px-2.5 py-1 text-sm font-medium rounded-full ${bg} ${text}`}
+                        >
+                          {flag}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -65,12 +104,16 @@ const Accounts = () => {
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => setEditingAccount(account.id)}
+                  onClick={() => handleEdit(account.id)}
                 >
                   <PencilLine size={16} className="mr-2" />
                   Upravit
                 </Button>
-                <Button variant="secondary" size="sm">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => handleDelete(account)}
+                >
                   <Trash2 size={16} className="mr-2" />
                   Smazat
                 </Button>
@@ -87,8 +130,19 @@ const Accounts = () => {
           Přidat účet
         </Button>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {accountToDelete && (
+        <DeleteAccountModal
+          isOpen={true}
+          onClose={() => setAccountToDelete(null)}
+          account={accountToDelete}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
     </div>
   );
 };
 
 export default Accounts;
+```
