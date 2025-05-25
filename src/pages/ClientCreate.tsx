@@ -3,9 +3,13 @@ import { Button, TextField, Typography, Paper } from "../components";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../navigation/ROUTES";
 import { UserPlus, Save, X } from "lucide-react";
+import { useCreateClient } from "../api/createClient";
+import { toast } from "react-toastify";
 
 const ClientCreate = () => {
   const navigate = useNavigate();
+  const createClient = useCreateClient();
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,9 +18,14 @@ const ClientCreate = () => {
     notes: "",
   });
 
-  const handleSave = () => {
-    // Here would be the API call to create the client
-    navigate(ROUTES.CLIENTS);
+  const handleSave = async () => {
+    try {
+      await createClient.mutateAsync(formData);
+      toast.success("Klient byl úspěšně vytvořen");
+      navigate(ROUTES.CLIENTS);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nepodařilo se vytvořit klienta");
+    }
   };
 
   const handleCancel = () => {
@@ -55,7 +64,6 @@ const ClientCreate = () => {
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            required
           />
 
           <TextField
@@ -80,13 +88,21 @@ const ClientCreate = () => {
           />
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button variant="secondary" onClick={handleCancel}>
+            <Button 
+              variant="secondary" 
+              onClick={handleCancel}
+              disabled={createClient.isPending}
+            >
               <X size={16} className="mr-2" />
               Zrušit
             </Button>
-            <Button variant="primary" onClick={handleSave}>
+            <Button 
+              variant="primary" 
+              onClick={handleSave}
+              disabled={!formData.name || createClient.isPending}
+            >
               <Save size={16} className="mr-2" />
-              Vytvořit klienta
+              {createClient.isPending ? "Ukládám..." : "Vytvořit klienta"}
             </Button>
           </div>
         </div>
