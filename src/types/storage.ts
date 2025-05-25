@@ -1,16 +1,19 @@
 import type { LoginResponse } from "../api/login";
+import type { Period } from "./period";
 
 export enum STORAGE_KEYS {
-	USER = "user",
+  USER = "user",
+  PERIOD = "period"
 }
 
 export type STORAGE_VALUES = {
-	[STORAGE_KEYS.USER]: LoginResponse | null;
+  [STORAGE_KEYS.USER]: LoginResponse | null;
+  [STORAGE_KEYS.PERIOD]: Record<string, Period>;
 };
 
 export type StorageContextType = {
-	getItem: <T extends STORAGE_KEYS>(key: T) => STORAGE_VALUES[T] | null;
-	setItem: <T extends STORAGE_KEYS>(key: T, value: STORAGE_VALUES[T]) => void;
-	clearItem: (key: STORAGE_KEYS) => void;
-	clearEntireStorage: () => void;
+  getItem: <T extends STORAGE_KEYS>(key: T) => STORAGE_VALUES[T] | null;
+  setItem: <T extends STORAGE_KEYS>(key: T, value: STORAGE_VALUES[T]) => void;
+  clearItem: (key: STORAGE_KEYS) => void;
+  clearEntireStorage: () => void;
 };
