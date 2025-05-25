@@ -26,42 +26,17 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left side - Promo */}
+      {/* Left side - Simple welcome */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 text-white items-center justify-center p-12 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(100,100,255,0.1),transparent_70%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(100,255,100,0.05),transparent_70%)]" />
-        <div className="relative max-w-md">
-          <div className="mb-12">
-            <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent">
-              Wudget
-            </h1>
-            <p className="text-2xl font-medium mb-4 text-primary-400">
-              Správce osobních financí pro všechny
-            </p>
-          </div>
-          <div className="space-y-8">
-            <div className="space-y-6 text-neutral-400">
-              <p className="leading-relaxed">
-                Wudget je moderní nástroj pro správu osobních i firemních financí, který vám pomůže mít přehled o všech vašich příjmech a výdajích.
-              </p>
-              <p className="leading-relaxed">
-                Ať už jste finanční poradce nebo běžný uživatel, Wudget vám nabízí:
-              </p>
-            </div>
-            <ul className="space-y-4">
-              {[
-                "Automatické kategorizace transakcí",
-                "Přehledné reporty a analýzy",
-                "Napojení na všechny české banky",
-                "Bezpečné šifrování dat",
-              ].map((feature, index) => (
-                <li key={index} className="flex items-center gap-3 text-neutral-300">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="relative">
+          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent">
+            Wudget
+          </h1>
+          <p className="text-2xl font-medium text-primary-400">
+            Vítejte zpět
+          </p>
         </div>
       </div>
 
@@ -70,7 +45,7 @@ const Login = () => {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center lg:text-left">
             <h2 className="text-3xl font-bold text-neutral-900 mb-3">
-              Vítejte zpět
+              Přihlášení
             </h2>
             <p className="text-neutral-600">
               Zadejte své přihlašovací údaje pro pokračování
@@ -148,13 +123,6 @@ const Login = () => {
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </span>
             </Button>
-
-            <p className="text-center text-sm text-neutral-600">
-              Nemáte ještě účet?{" "}
-              <button className="font-medium text-primary-600 hover:text-primary-500">
-                Zaregistrujte se
-              </button>
-            </p>
           </form>
         </div>
       </div>
