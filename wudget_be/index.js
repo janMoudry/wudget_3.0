@@ -1,187 +1,110 @@
-const express = require("express");
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
-const iconv = require("iconv-lite");
-const csv = require("csv-parser");
-const cors = require("cors");
+import express from 'express';
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
+import iconv from 'iconv-lite';
+import csv from 'csv-parser';
+import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { fileURLToPath } from 'url';
+import db from './db/index.js';
 
-// 1. Mapování bank → normalizátory
-const normalizers = {
-	airbank: require("./normalizers/airbank"),
-	// další banky později: komercka, fio, ...
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const JWT_SECRET = 'your-secret-key'; // In production, use environment variable
 
 const app = express();
 const port = 3001;
-const DATA_PATH = path.join(__dirname, "data", "transactions.json");
 
 app.use(cors());
-const upload = multer({ dest: "uploads/" });
+app.use(express.json());
 
-// 2. Upload endpoint
-app.post("/upload", upload.single("file"), (req, res) => {
-	const bank = req.query.bank;
-	if (!req.file || !bank || !normalizers[bank]) {
-		return res.status(400).json({
-			error: "Missing file or invalid/missing bank parameter.",
-		});
-	}
+const upload = multer({ dest: 'uploads/' });
 
-	const rows = [];
-	const filePath = path.join(__dirname, req.file.path);
+// Authentication middleware
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
 
-	fs.createReadStream(filePath)
-		.pipe(iconv.decodeStream("win1250"))
-		.pipe(csv({ separator: ";" }))
-		.on("data", (data) => rows.push(data))
-		.on("end", () => {
-			fs.unlinkSync(filePath); // smažeme CSV
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
 
-			const normalize = normalizers[bank];
-			const normalized = rows.map(normalize);
+// Login endpoint
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
 
-			const now = new Date().toISOString();
+  try {
+    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
-			const jsonToSave = {
-				bank,
-				importedAt: now,
-				data: normalized,
-			};
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-			fs.writeFileSync(
-				DATA_PATH,
-				JSON.stringify(jsonToSave, null, 2),
-				"utf-8"
-			);
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-			res.json({ success: true, count: normalized.length });
-		})
-		.on("error", (err) => {
-			console.error("CSV parsing error:", err);
-			fs.unlinkSync(filePath);
-			res.status(500).json({ error: "CSV parsing failed." });
-		});
+    // Create JWT token
+    const token = jwt.sign(
+      { id: user.id, email: user.email, name: user.name },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Return user data without password
+    const { password: _, ...safeUser } = user;
+    res.json({
+      ...safeUser,
+      token,
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
-// 3. Endpoint pro získání transakcí
-app.get("/transactions", (req, res) => {
-	if (!fs.existsSync(DATA_PATH)) {
-		return res.json([]);
-	}
-	const data = fs.readFileSync(DATA_PATH, "utf-8");
-	res.json(JSON.parse(data));
-});
+// Protected routes
+app.use('/api', authenticate);
 
-app.get("/overview", (req, res) => {
-	if (!fs.existsSync(DATA_PATH)) {
-		return res.status(404).json({ error: "No transactions found." });
-	}
+// Upload endpoint
+app.post('/api/upload', upload.single('file'), (req, res) => {
+  const bank = req.query.bank;
+  if (!req.file || !bank) {
+    return res.status(400).json({
+      error: 'Missing file or invalid/missing bank parameter.',
+    });
+  }
 
-	const json = JSON.parse(fs.readFileSync(DATA_PATH, "utf-8"));
-	const data = json?.data || [];
+  const rows = [];
+  const filePath = path.join(__dirname, req.file.path);
 
-	const income = data.filter((t) => t.type === "income");
-	const expense = data.filter((t) => t.type === "expense");
-
-	const sum = (arr) =>
-		arr.reduce((acc, t) => acc + (Number(t.amount) || 0), 0);
-
-	// Přehled kategorií
-	const categoryTotals = {};
-	data.forEach((t) => {
-		const cat = t.category || "Nezařazeno";
-		if (!categoryTotals[cat]) categoryTotals[cat] = 0;
-		categoryTotals[cat] += Number(t.amount);
-	});
-	const byCategory = Object.entries(categoryTotals).map(
-		([category, total]) => ({
-			category,
-			total,
-			type: total >= 0 ? "income" : "expense",
-		})
-	);
-
-	// Přehled podle měsíců
-	const monthly = {};
-	data.forEach((t) => {
-		const month = t.date?.slice(0, 7); // "YYYY-MM"
-		if (!month) return;
-		if (!monthly[month]) monthly[month] = { income: 0, expense: 0 };
-		if (t.type === "income") monthly[month].income += Number(t.amount);
-		if (t.type === "expense") monthly[month].expense += Number(t.amount);
-	});
-	const byMonth = Object.entries(monthly).map(([month, stats]) => ({
-		month,
-		...stats,
-	}));
-
-	// Přehled podle dnů
-	const daily = {};
-	data.forEach((t) => {
-		const day = t.date?.slice(0, 10); // "YYYY-MM-DD"
-		if (!day) return;
-		if (!daily[day]) daily[day] = { income: 0, expense: 0 };
-		if (t.type === "income") daily[day].income += Number(t.amount);
-		if (t.type === "expense") daily[day].expense += Number(t.amount);
-	});
-	const byDay = Object.entries(daily).map(([date, stats]) => ({
-		date,
-		...stats,
-	}));
-
-	// Největší příjem / výdaj
-	const maxIncome = income.reduce(
-		(prev, curr) =>
-			Number(curr.amount) > Number(prev.amount) ? curr : prev,
-		{ amount: 0 }
-	);
-	const maxExpense = expense.reduce(
-		(prev, curr) =>
-			Number(curr.amount) < Number(prev.amount) ? curr : prev,
-		{ amount: 0 }
-	);
-
-	// Nejčastější kategorie
-	const categoryFreq = {};
-	data.forEach((t) => {
-		const cat = t.category || "Nezařazeno";
-		categoryFreq[cat] = (categoryFreq[cat] || 0) + 1;
-	});
-	const mostUsedCategory = Object.entries(categoryFreq).sort(
-		(a, b) => b[1] - a[1]
-	)[0]?.[0];
-
-	res.json({
-		bank: json.bank,
-		importedAt: json.importedAt,
-		balance: sum(data),
-		stats: {
-			totalTransactions: data.length,
-			totalIncome: sum(income),
-			totalExpense: sum(expense),
-			incomeCount: income.length,
-			expenseCount: expense.length,
-		},
-		invoices: {
-			paid: 904691.48,
-			unpaid: 0,
-			overdue: 94500,
-			totalCount: 13,
-		},
-		chartData: {
-			byMonth,
-			byDay,
-			byCategory,
-		},
-		labels: {
-			mostUsedCategory,
-			highestIncome: `${maxIncome.counterparty} ${maxIncome.date}`,
-			highestExpense: `${maxExpense.counterparty} ${maxExpense.date}`,
-		},
-	});
+  fs.createReadStream(filePath)
+    .pipe(iconv.decodeStream('win1250'))
+    .pipe(csv({ separator: ';' }))
+    .on('data', (data) => rows.push(data))
+    .on('end', () => {
+      fs.unlinkSync(filePath);
+      res.json({ success: true, count: rows.length });
+    })
+    .on('error', (err) => {
+      console.error('CSV parsing error:', err);
+      fs.unlinkSync(filePath);
+      res.status(500).json({ error: 'CSV parsing failed.' });
+    });
 });
 
 app.listen(port, () => {
-	console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running at http://localhost:${port}`);
 });

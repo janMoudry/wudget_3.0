@@ -1,48 +1,46 @@
 import { useMutation } from "@tanstack/react-query";
 
 export type LoginRequest = {
-	email: string;
-	password: string;
+  email: string;
+  password: string;
 };
 
 export type LoginResponse = {
-	id: string;
-	name: string;
-	email: string;
-	token: string;
-	clients: {
-		id: string;
-		name: string;
-		status: string;
-	}[];
+  id: string;
+  name: string;
+  email: string;
+  token: string;
 };
 
 const login = async ({
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	email: _email,
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	password: _password,
+  email,
+  password,
 }: LoginRequest): Promise<LoginResponse> => {
-	const res = await fetch(`/MOCK/user.json`, {});
-	const user = (await res.json()) as LoginResponse;
+  const res = await fetch(`http://localhost:3001/api/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  });
 
-	const { ...safeUser } = user;
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Login failed');
+  }
 
-	return {
-		...safeUser,
-		token: "mock-jwt-token-123",
-	};
+  return res.json();
 };
 
 export const useLogin = () =>
-	useMutation({
-		mutationFn: login,
-		onError: (error) => {
-			if (error instanceof Error) {
-				alert(error.message);
-			}
-		},
-		onSuccess: (data) => {
-			localStorage.setItem("token", data.token);
-		},
-	});
+  useMutation({
+    mutationFn: login,
+    onError: (error) => {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+    },
+  });
