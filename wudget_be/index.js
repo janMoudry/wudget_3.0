@@ -45,7 +45,7 @@ app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    const user = await db.asyncGet('SELECT * FROM users WHERE email = ?', [email]);
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });

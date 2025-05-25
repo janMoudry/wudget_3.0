@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import sqlite3 from 'sqlite3';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -6,13 +6,54 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const db = new Database('wudget.db');
+// Create database connection
+const db = new sqlite3.Database(':memory:', (err) => {
+  if (err) {
+    console.error('Error opening database:', err);
+    return;
+  }
+  console.log('Connected to SQLite database');
+});
 
 // Enable foreign keys
-db.pragma('foreign_keys = ON');
+db.run('PRAGMA foreign_keys = ON');
 
 // Load and execute schema
 const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
-db.exec(schema);
+db.exec(schema, (err) => {
+  if (err) {
+    console.error('Error executing schema:', err);
+    return;
+  }
+  console.log('Schema executed successfully');
+});
+
+// Promisify db.all and db.get
+db.asyncAll = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+};
+
+db.asyncGet = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+};
+
+db.asyncRun = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err) {
+      if (err) reject(err);
+      else resolve(this);
+    });
+  });
+};
 
 export default db;
