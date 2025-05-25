@@ -63,7 +63,7 @@ const TabProvider: FC<TabProviderProps> = ({ children }) => {
         }
       );
     }
-  }, [client, navigate, statementsCheck]);
+  }, [client, statementsCheck]);
 
   const handleSetPeriod = (newPeriod: Period) => {
     setPeriod(newPeriod);
