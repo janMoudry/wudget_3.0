@@ -9,6 +9,9 @@ export const ROUTES = {
   SETTINGS: "/settings",
   CALCULATOR: "/calculator",
   REPORTS: "/reports",
+  PRODUCTS: "/products",
+  PRODUCT_CREATE: "/products/create",
+  PRODUCT_EDIT: "/products/:productId/edit",
 
   // Client
   CLIENT_ROOT: "/:clientId/",
@@ -21,5 +24,6 @@ export const ROUTES = {
     ACCOUNTS: "/:clientId/accounts",
     ACCOUNT_EDIT: "/:clientId/accounts/:accountId/edit",
     ACCOUNT_CREATE: "/:clientId/accounts/create",
+    PRODUCTS: "/:clientId/products",
   },
 };

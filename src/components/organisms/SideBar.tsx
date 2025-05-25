@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { ROUTES } from "../../navigation/ROUTES";
 import { Divider } from "../atoms";
-import { LayoutDashboard, Users, Settings, Calculator, ChartBar, Wallet } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Calculator, ChartBar, Wallet, Package } from "lucide-react";
 import { Accordion } from "../molecules";
 
 const SideBar = () => {
@@ -35,6 +35,23 @@ const SideBar = () => {
           >
             <Users size={18} />
             Klienti
+          </NavLink>
+        </Accordion>
+
+        {/* Products */}
+        <Accordion title="Produkty a služby">
+          <NavLink
+            to={ROUTES.PRODUCTS}
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                isActive 
+                  ? "bg-gray-100 text-gray-900 font-medium" 
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              }`
+            }
+          >
+            <Package size={18} />
+            Produkty
           </NavLink>
         </Accordion>
 

@@ -17,6 +17,9 @@ const Navigation = () => (
       <Route path={ROUTES.SETTINGS} element={<PAGES.SETTINGS />} />
       <Route path={ROUTES.CALCULATOR} element={<PAGES.CALCULATOR />} />
       <Route path={ROUTES.REPORTS} element={<PAGES.REPORTS />} />
+      <Route path={ROUTES.PRODUCTS} element={<PAGES.PRODUCTS />} />
+      <Route path={ROUTES.PRODUCT_CREATE} element={<PAGES.PRODUCT_CREATE />} />
+      <Route path={ROUTES.PRODUCT_EDIT} element={<PAGES.PRODUCT_EDIT />} />
     </Route>
     {/* Client */}
     <Route path={ROUTES.CLIENT_ROOT} element={<ClientLayout />}>
@@ -28,6 +31,7 @@ const Navigation = () => (
       <Route path={ROUTES.CLIENT.ACCOUNTS} element={<PAGES.ACCOUNTS />} />
       <Route path={ROUTES.CLIENT.ACCOUNT_EDIT} element={<PAGES.ACCOUNT_EDIT />} />
       <Route path={ROUTES.CLIENT.ACCOUNT_CREATE} element={<PAGES.ACCOUNT_CREATE />} />
+      <Route path={ROUTES.CLIENT.PRODUCTS} element={<PAGES.CLIENT_PRODUCTS />} />
     </Route>
   </Routes>
 );

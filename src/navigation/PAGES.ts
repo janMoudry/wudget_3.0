@@ -17,4 +17,8 @@ export const PAGES = {
   ACCOUNT_CREATE: lazy(() => import("../pages/AccountCreate")),
   CALCULATOR: lazy(() => import("../pages/Calculator")),
   REPORTS: lazy(() => import("../pages/Reports")),
+  PRODUCTS: lazy(() => import("../pages/Products")),
+  PRODUCT_CREATE: lazy(() => import("../pages/ProductCreate")),
+  PRODUCT_EDIT: lazy(() => import("../pages/ProductEdit")),
+  CLIENT_PRODUCTS: lazy(() => import("../pages/ClientProducts")),
 };
