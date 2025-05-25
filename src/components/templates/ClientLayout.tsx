@@ -22,19 +22,17 @@ const BaseLayoutComponent = () => {
 	}, [isLoading, isError]);
 
 	return (
-		<TabProvider>
-			<div className="flex flex-col h-screen">
-				<AppBar />
-				<div className="flex flex-1 overflow-hidden">
-					<ClientSideBar />
-					<main className="flex-1 overflow-y-auto p-6 bg-white">
-						<Suspense fallback={<div>Načítání...</div>}>
-							{Content}
-						</Suspense>
-					</main>
-				</div>
+		<div className="flex flex-col h-screen">
+			<AppBar />
+			<div className="flex flex-1 overflow-hidden">
+				<ClientSideBar />
+				<main className="flex-1 overflow-y-auto p-6 bg-white">
+					<Suspense fallback={<div>Načítání...</div>}>
+						{Content}
+					</Suspense>
+				</main>
 			</div>
-		</TabProvider>
+		</div>
 	);
 };
 
