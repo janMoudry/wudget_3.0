@@ -1,4 +1,4 @@
-```typescript
+```typescript```
 export const ROUTES = {
   LOGIN: "/login",
 
@@ -20,4 +20,3 @@ export const ROUTES = {
     ACCOUNT_EDIT: "/:clientId/accounts/:accountId/edit",
   },
 };
-```
