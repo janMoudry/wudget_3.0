@@ -1,4 +1,3 @@
-// src/components/molecules/ClientCard.tsx
 import type { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ClientSummary } from "../../api/getClients";
@@ -13,7 +12,7 @@ const ClientCard: FC<ClientCardProps> = ({ client }) => {
   const navigate = useNavigate();
 
   const statusConfig = {
-    ok: {
+    active: {
       bg: "bg-emerald-50",
       text: "text-emerald-700",
       border: "border-emerald-100",
@@ -33,7 +32,7 @@ const ClientCard: FC<ClientCardProps> = ({ client }) => {
     }
   };
 
-  const status = statusConfig[client.status];
+  const status = statusConfig[client.status as keyof typeof statusConfig] || statusConfig.active;
 
   return (
     <div
