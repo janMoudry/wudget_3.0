@@ -13,6 +13,8 @@ export const ROUTES = {
   PRODUCT_CREATE: "/products/create",
   PRODUCT_EDIT: "/products/:productId/edit",
   PLANS: "/plans",
+  ADVISOR: "/advisor",
+  ADVISOR_COMMUNICATIONS: "/advisor/communications",
 
   // Client
   CLIENT_ROOT: "/:clientId/",
@@ -28,6 +30,7 @@ export const ROUTES = {
     PRODUCTS: "/:clientId/products",
     COUNTERPARTIES: "/:clientId/counterparties",
     SUBSCRIPTIONS: "/:clientId/subscriptions",
-    PLANS: "/:clientId/plans"
+    PLANS: "/:clientId/plans",
+    PROGRESS: "/:clientId/progress"
   },
 };

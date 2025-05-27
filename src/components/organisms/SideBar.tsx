@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { ROUTES } from "../../navigation/ROUTES";
 import { Divider } from "../atoms";
-import { LayoutDashboard, Users, Settings, Calculator, ChartBar, Wallet, Package, Target } from "lucide-react";
+import { LayoutDashboard, Users, Settings, Calculator, ChartBar, Wallet, Package, Target, MessageSquare, TrendingUp } from "lucide-react";
 import { Accordion } from "../molecules";
 
 const SideBar = () => {
@@ -49,6 +49,36 @@ const SideBar = () => {
             >
               <Target size={18} />
               Plány a vize
+            </NavLink>
+          </Accordion>
+
+          {/* Advisor Section */}
+          <Accordion title="Poradce">
+            <NavLink
+              to={ROUTES.ADVISOR}
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                  isActive 
+                    ? "bg-gray-100 text-gray-900 font-medium" 
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`
+              }
+            >
+              <TrendingUp size={18} />
+              Přehled vývoje
+            </NavLink>
+            <NavLink
+              to={ROUTES.ADVISOR_COMMUNICATIONS}
+              className={({ isActive }) =>
+                `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                  isActive 
+                    ? "bg-gray-100 text-gray-900 font-medium" 
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                }`
+              }
+            >
+              <MessageSquare size={18} />
+              Komunikace
             </NavLink>
           </Accordion>
 

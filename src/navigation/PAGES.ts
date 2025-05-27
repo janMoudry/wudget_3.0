@@ -24,5 +24,8 @@ export const PAGES = {
   COUNTERPARTIES: lazy(() => import("../pages/Counterparties")),
   SUBSCRIPTIONS: lazy(() => import("../pages/Subscriptions")),
   PLANS: lazy(() => import("../pages/Plans")),
-  CLIENT_PLANS: lazy(() => import("../pages/ClientPlans"))
+  CLIENT_PLANS: lazy(() => import("../pages/ClientPlans")),
+  ADVISOR: lazy(() => import("../pages/Advisor")),
+  ADVISOR_COMMUNICATIONS: lazy(() => import("../pages/AdvisorCommunications")),
+  CLIENT_PROGRESS: lazy(() => import("../pages/ClientProgress"))
 };
