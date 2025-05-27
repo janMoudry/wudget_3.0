@@ -13,8 +13,6 @@ export const ROUTES = {
   PRODUCT_CREATE: "/products/create",
   PRODUCT_EDIT: "/products/:productId/edit",
   PLANS: "/plans",
-  ADVISOR: "/advisor",
-  ADVISOR_COMMUNICATIONS: "/advisor/communications",
 
   // Client
   CLIENT_ROOT: "/:clientId/",
@@ -31,6 +29,9 @@ export const ROUTES = {
     COUNTERPARTIES: "/:clientId/counterparties",
     SUBSCRIPTIONS: "/:clientId/subscriptions",
     PLANS: "/:clientId/plans",
-    PROGRESS: "/:clientId/progress"
+    PROGRESS: "/:clientId/progress",
+    // Advisor-only routes under client
+    ADVISOR: "/:clientId/advisor",
+    ADVISOR_COMMUNICATIONS: "/:clientId/advisor/communications"
   },
 };

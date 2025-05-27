@@ -37,24 +37,6 @@ const Navigation = () => (
       <Route path={ROUTES.PRODUCT_CREATE} element={<PAGES.PRODUCT_CREATE />} />
       <Route path={ROUTES.PRODUCT_EDIT} element={<PAGES.PRODUCT_EDIT />} />
       <Route path={ROUTES.PLANS} element={<PAGES.PLANS />} />
-      
-      {/* Advisor Only Routes */}
-      <Route
-        path={ROUTES.ADVISOR}
-        element={
-          <ProtectedRoute roles={["advisor"]}>
-            <PAGES.ADVISOR />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.ADVISOR_COMMUNICATIONS}
-        element={
-          <ProtectedRoute roles={["advisor"]}>
-            <PAGES.ADVISOR_COMMUNICATIONS />
-          </ProtectedRoute>
-        }
-      />
     </Route>
     {/* Client */}
     <Route path={ROUTES.CLIENT_ROOT} element={<ClientLayout />}>
@@ -71,6 +53,23 @@ const Navigation = () => (
       <Route path={ROUTES.CLIENT.SUBSCRIPTIONS} element={<PAGES.SUBSCRIPTIONS />} />
       <Route path={ROUTES.CLIENT.PLANS} element={<PAGES.CLIENT_PLANS />} />
       <Route path={ROUTES.CLIENT.PROGRESS} element={<PAGES.CLIENT_PROGRESS />} />
+      {/* Advisor-only routes */}
+      <Route
+        path={ROUTES.CLIENT.ADVISOR}
+        element={
+          <ProtectedRoute roles={["advisor"]}>
+            <PAGES.ADVISOR />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.CLIENT.ADVISOR_COMMUNICATIONS}
+        element={
+          <ProtectedRoute roles={["advisor"]}>
+            <PAGES.ADVISOR_COMMUNICATIONS />
+          </ProtectedRoute>
+        }
+      />
     </Route>
   </Routes>
 );

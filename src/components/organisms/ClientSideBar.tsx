@@ -4,10 +4,12 @@ import { useTab } from "../../hooks/useTab";
 import { Select, Divider } from "../atoms";
 import { PERIOD_LABELS } from "../../types/period";
 import { Accordion } from "../molecules";
-import { LayoutDashboard, FileText, Upload, Settings, Wallet, Package, Users, Repeat, Target } from "lucide-react";
+import { LayoutDashboard, FileText, Upload, Settings, Wallet, Package, Users, Repeat, Target, TrendingUp, MessageSquare } from "lucide-react";
+import { useAuth } from "../../hooks";
 
 const ClientSidebar = () => {
   const { tab, client, setPeriod, setAccountId } = useTab();
+  const { role } = useAuth();
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
@@ -155,6 +157,38 @@ const ClientSidebar = () => {
               Nahrát Výpis
             </NavLink>
           </Accordion>
+
+          {/* Advisor Section - Only visible to advisors */}
+          {role === "advisor" && (
+            <Accordion title="Poradce">
+              <NavLink
+                to={ROUTES.CLIENT.ADVISOR.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                    isActive 
+                      ? "bg-gray-100 text-gray-900 font-medium" 
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`
+                }
+              >
+                <TrendingUp size={18} />
+                Přehled vývoje
+              </NavLink>
+              <NavLink
+                to={ROUTES.CLIENT.ADVISOR_COMMUNICATIONS.replace(ROUTES.CLIENT_ROOT, `/${tab.id}/`)}
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-200 ${
+                    isActive 
+                      ? "bg-gray-100 text-gray-900 font-medium" 
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`
+                }
+              >
+                <MessageSquare size={18} />
+                Komunikace
+              </NavLink>
+            </Accordion>
+          )}
 
           {/* Settings */}
           <Accordion title="Nastavení">
