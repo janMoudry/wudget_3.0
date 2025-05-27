@@ -9,7 +9,8 @@ import { ROUTES } from "../navigation/ROUTES";
 
 const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<LoginResponse | null>(null);
-  const [role, setRole] = useState<UserRole>("client");
+  // For now, everyone is an advisor
+  const [role] = useState<UserRole>("advisor");
 
   const { getItem, setItem, clearItem } = useStorage();
   const loginMutation = useLogin();
@@ -23,10 +24,8 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (response) {
-        // In a real app, role would come from the backend
-        const userRole: UserRole = email.includes("advisor") ? "advisor" : "client";
-        setRole(userRole);
-        setItem(STORAGE_KEYS.USER, { ...response, role: userRole });
+        // Everyone gets advisor role for now
+        setItem(STORAGE_KEYS.USER, { ...response, role: "advisor" });
         setUser(response);
         navigate(ROUTES.DASHBOARD);
       }
@@ -36,7 +35,6 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   const handleLogout: AuthContextType["logout"] = useCallback(() => {
     setUser(null);
-    setRole("client");
     clearItem(STORAGE_KEYS.USER);
     navigate(ROUTES.LOGIN);
   }, [clearItem, navigate]);
@@ -48,10 +46,8 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
     if (storedUser) {
       setUser(storedUser);
-      setRole(storedUser.role || "client");
     } else {
       setUser(null);
-      setRole("client");
       clearItem(STORAGE_KEYS.USER);
       navigate(ROUTES.LOGIN);
     }

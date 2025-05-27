@@ -5,15 +5,11 @@ import { BaseLayout, ClientLayout, LoginLayout } from "@components";
 import { useAuth } from "../hooks";
 import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ children, roles }: { children: React.ReactNode; roles?: string[] }) => {
-  const { user, role } = useAuth();
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuth();
 
   if (!user) {
     return <Navigate to={ROUTES.LOGIN} />;
-  }
-
-  if (roles && !roles.includes(role)) {
-    return <Navigate to={ROUTES.DASHBOARD} />;
   }
 
   return <>{children}</>;
@@ -53,11 +49,11 @@ const Navigation = () => (
       <Route path={ROUTES.CLIENT.SUBSCRIPTIONS} element={<PAGES.SUBSCRIPTIONS />} />
       <Route path={ROUTES.CLIENT.PLANS} element={<PAGES.CLIENT_PLANS />} />
       <Route path={ROUTES.CLIENT.PROGRESS} element={<PAGES.CLIENT_PROGRESS />} />
-      {/* Advisor-only routes */}
+      {/* Advisor routes - now accessible to all logged in users */}
       <Route
         path={ROUTES.CLIENT.ADVISOR}
         element={
-          <ProtectedRoute roles={["advisor"]}>
+          <ProtectedRoute>
             <PAGES.ADVISOR />
           </ProtectedRoute>
         }
@@ -65,7 +61,7 @@ const Navigation = () => (
       <Route
         path={ROUTES.CLIENT.ADVISOR_COMMUNICATIONS}
         element={
-          <ProtectedRoute roles={["advisor"]}>
+          <ProtectedRoute>
             <PAGES.ADVISOR_COMMUNICATIONS />
           </ProtectedRoute>
         }
