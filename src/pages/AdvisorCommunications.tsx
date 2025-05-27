@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Typography, Paper, TextField, Select } from "../components";
+import { Button, Typography, Paper, Select } from "../components";
 import { MessageSquare, Plus, Bell, Send, Calendar, Settings } from "lucide-react";
 
 type AutoMessage = {
@@ -36,6 +36,18 @@ const MOCK_AUTO_MESSAGES: AutoMessage[] = [
     template: "Dobrý den, zaznamenali jsme vyšší výdaje než obvykle...",
     status: "active",
     lastTriggered: "2025-03-10",
+  },
+  {
+    id: "3",
+    name: "Měsíční přehled",
+    condition: "Každý první den v měsíci",
+    template: `Vážený pane Nováku,
+
+V uplynulém měsíci jste udržel své výdaje pod stanoveným limitem, navýšil jste zůstatek o 3 200 Kč a přiblížil se k dosažení cíle "Dovolená" na 92 %.
+
+Pokud udržíte tento trend, cíle dosáhnete do konce června. Skvělá práce!`,
+    status: "active",
+    lastTriggered: "2025-03-01",
   },
 ];
 
@@ -79,7 +91,7 @@ const AdvisorCommunications = () => {
           </Typography>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex items-center gap-4">
           <Button variant="secondary" onClick={() => setActiveTab("auto")}>
             <Settings size={16} className="mr-2" />
             Automatické zprávy
@@ -134,7 +146,7 @@ const AdvisorCommunications = () => {
                       </Button>
                     </div>
                   </div>
-                  <div className="bg-gray-50 p-3 rounded-lg text-sm">
+                  <div className="bg-gray-50 p-3 rounded-lg text-sm whitespace-pre-line">
                     {message.template}
                   </div>
                   {message.lastTriggered && (
