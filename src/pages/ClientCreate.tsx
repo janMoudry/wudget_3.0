@@ -115,7 +115,7 @@ ${formData.notes}
       case 1:
         return (
           <div className="space-y-6">
-            <Typography variant="h3" className="text-gray-900">
+            <Typography variant="h3\" className="text-gray-900">
               Základní informace
             </Typography>
             
