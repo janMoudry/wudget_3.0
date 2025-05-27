@@ -6,7 +6,6 @@ export const PAGES = {
   CLIENTS: lazy(() => import("../pages/Clients")),
   CLIENT_CREATE: lazy(() => import("../pages/ClientCreate")),
   CLIENT_DASHBOARD: lazy(() => import("../pages/ClientDashboard")),
-  CLIENT_OVERVIEW: lazy(() => import("../pages/ClientOverview")), // New page
   TRANSACTIONS: lazy(() => import("../pages/Transactions")),
   UPLOAD: lazy(() => import("../pages/Upload")),
   PROFILE: lazy(() => import("../pages/Profile")),

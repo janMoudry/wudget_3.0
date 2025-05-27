@@ -18,7 +18,6 @@ export const ROUTES = {
   CLIENT_ROOT: "/:clientId/",
   CLIENT: {
     DASHBOARD: "/:clientId/dashboard",
-    OVERVIEW: "/:clientId/overview", // New route
     TRANSACTIONS: "/:clientId/transactions",
     UPLOAD: "/:clientId/upload",
     STATEMENTS: "/:clientId/statements",

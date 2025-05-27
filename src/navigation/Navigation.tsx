@@ -25,7 +25,6 @@ const Navigation = () => (
     {/* Client */}
     <Route path={ROUTES.CLIENT_ROOT} element={<ClientLayout />}>
       <Route path={ROUTES.CLIENT.DASHBOARD} element={<PAGES.CLIENT_DASHBOARD />} />
-      <Route path={ROUTES.CLIENT.OVERVIEW} element={<PAGES.CLIENT_OVERVIEW />} />
       <Route path={ROUTES.CLIENT.TRANSACTIONS} element={<PAGES.TRANSACTIONS />} />
       <Route path={ROUTES.CLIENT.UPLOAD} element={<PAGES.UPLOAD />} />
       <Route path={ROUTES.CLIENT.STATEMENTS} element={<PAGES.STATEMENTS />} />
